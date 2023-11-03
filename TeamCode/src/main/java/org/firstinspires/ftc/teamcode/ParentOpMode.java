@@ -47,7 +47,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 
 /**
@@ -87,9 +87,7 @@ public class ParentOpMode extends LinearOpMode {
     private CRServo IntakeServo = null;
     private Servo PushyServo = null;
 
-    BHI260IMU Imu;
-    BNO055IMU imu;
-    Orientation angles = new Orientation();
+    IMU imu;
 
 
     //Other Global Variables
@@ -242,6 +240,9 @@ public class ParentOpMode extends LinearOpMode {
        }
 
 
+    }
+    public boolean yawResetButton(){
+        return gamepad1.back;
     }
 
 
@@ -407,33 +408,34 @@ public class ParentOpMode extends LinearOpMode {
     //Gyro Functions
     private void gyroInitialize() {
 
+        imu = hardwareMap.get(IMU.class, "imu");
+        RevHubOrientationOnRobot.LogoFacingDirection LogoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection USBDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-
-        parameters.mode = BNO055IMU.SensorMode.IMU; // test gyro mode+
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.loggingEnabled = false;
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
-        while (!imu.isGyroCalibrated() && !isStopRequested()){
-            sleep(500);
-            idle();
-        }
-
-
+        RevHubOrientationOnRobot TotalDirection = new RevHubOrientationOnRobot(LogoDirection, USBDirection);
+        IMU.Parameters IMUParameters = new IMU.Parameters(TotalDirection);
+        imu.initialize(IMUParameters);
     }
 
 
     public double gyroAngle() {
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX, AngleUnit.DEGREES);
-        double heading = angles.firstAngle;
-        return heading;
 
+        YawPitchRollAngles YEEHAWOrientation = imu.getRobotYawPitchRollAngles();
+        double yawHolder3000 = YEEHAWOrientation.getYaw(AngleUnit.DEGREES);
+        return yawHolder3000;
     }
+    public void gyroReset() {
+
+        imu.resetYaw();
+    }
+
+    public void ManualResetGyro(){
+        if( yawResetButton() == true) {
+            gyroReset();
+        }
+    }
+
+
 
     //TODO:
     //  Telemetry - Add telemetry to functions to show motor speeds, servo positions, etc.

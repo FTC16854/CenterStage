@@ -89,6 +89,7 @@ public class TankDrive extends ParentOpMode {
             telemetry.addData("angle ", gyroAngle());
 
 
+            ManualResetGyro();
             checkEmergencyStop();
             // Stops motors and Terminates if buttons are pressed
 

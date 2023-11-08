@@ -340,14 +340,14 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     public void driveToggle(){
-    boolean fieldCentric = drive_Toggle.Toggle_Button();
+        boolean fieldCentric = drive_Toggle.Toggle_Button();
 
-    if ( fieldCentric) {
-        Field_Centric_drive();
-    }
-    else {
-        Robot_Centric_drive();
-    }
+        if (fieldCentric) {
+            Field_Centric_drive();
+        }
+        else {
+            Robot_Centric_drive();
+        }
     }
 
     public void stopDrive(){
@@ -459,8 +459,8 @@ public class ParentOpMode extends LinearOpMode {
         double yawHolder3000 = YEEHAWOrientation.getYaw(AngleUnit.DEGREES);
         return yawHolder3000;
     }
-    public void gyroReset() {
 
+    public void gyroReset() {
         imu.resetYaw();
     }
 
@@ -474,7 +474,10 @@ public class ParentOpMode extends LinearOpMode {
 
     //TODO:
     //  Helper Class - Create Gyro Heading Offset Holder Class
-    //  Helper Class - Create Toggle Class - add debounce
+    //  Helper Class - Create Toggle Class
+    //      - add debounce
+    //  Change intake to motors - not using servos
+    //  use combination of buttons for pushypushpush thingy for OUT Position to save on buttons and accidental drops
     //  Incorporate sensor(s) for lift (encoder, limit switch, string potentiometer) to allow set heights/positions
 
     //TODO: AUTONOMOUS

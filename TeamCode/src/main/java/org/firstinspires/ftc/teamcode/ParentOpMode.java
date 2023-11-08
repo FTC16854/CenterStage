@@ -473,13 +473,9 @@ public class ParentOpMode extends LinearOpMode {
 
 
     //TODO:
-    //  Telemetry - Add telemetry to functions to show motor speeds, servo positions, etc.
-    //  Holonomic Drive - Robot-Centric
-    //  Holonomic Drive - Field-Centric
     //  Helper Class - Create Gyro Heading Offset Holder Class
-    //  Helper Class - Create ToggleButton Class
+    //  Helper Class - Create Toggle Class - add debounce
     //  Incorporate sensor(s) for lift (encoder, limit switch, string potentiometer) to allow set heights/positions
-    //  Odometry? - Discuss with team. Would this be helpful?
 
     //TODO: AUTONOMOUS
     //  Holonomic Auto Drive function (time-based)
@@ -487,5 +483,7 @@ public class ParentOpMode extends LinearOpMode {
 
     //TODO: (Maybe, Hopefully) - Advanced
     //  Computer Vision - AprilTags
+    //                  - Align with Tag (Strafe)?
+    //                  - Rotate toward Tag?
     //  Computer Vision/ML/TensorFlow - Object Detection (Team Prop)
 }

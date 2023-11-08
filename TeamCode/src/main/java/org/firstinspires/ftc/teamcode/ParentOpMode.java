@@ -96,6 +96,8 @@ public class ParentOpMode extends LinearOpMode {
     //
     //
 
+    Toggle drive_Toggle = new Toggle(drive_toggle_button());
+
     public void initialize(){
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
@@ -218,6 +220,10 @@ public class ParentOpMode extends LinearOpMode {
         }
     }
 
+    public boolean drive_toggle_button(){
+        return gamepad1.start;
+    }
+
     public boolean Push_Out() { return gamepad1.left_bumper;}
     public boolean Push_Back() {
         if (gamepad1.left_trigger >= .5){
@@ -297,7 +303,25 @@ public class ParentOpMode extends LinearOpMode {
 
     }
 
-    public void Holonomic_drive (){
+    public void Field_Centric_drive (){
+        double Rotation = -right_sticky_x();
+
+        double DriveAngle = Math.atan2(left_sticky_y(), left_sticky_x()) - Math.toRadians(gyroAngle());
+        double magnitude = Math.hypot(left_sticky_x(), left_sticky_y());
+
+        double leftFrontWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) + (Rotation));
+        double rightFrontWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) - Rotation);
+        double leftBackWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) + (Rotation));
+        double rightBackWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) - Rotation);
+
+        leftFront.setPower(leftFrontWheel);
+        leftBack.setPower(leftBackWheel);
+        rightFront.setPower(rightFrontWheel);
+        rightBack.setPower(rightBackWheel);
+
+    }
+
+    public void Robot_Centric_drive (){
         double Rotation = -right_sticky_x();
 
         double DriveAngle = Math.atan2(left_sticky_y(), left_sticky_x());
@@ -313,6 +337,17 @@ public class ParentOpMode extends LinearOpMode {
         rightFront.setPower(rightFrontWheel);
         rightBack.setPower(rightBackWheel);
 
+    }
+
+    public void driveToggle(){
+    boolean fieldCentric = drive_Toggle.Toggle_Button();
+
+    if ( fieldCentric) {
+        Field_Centric_drive();
+    }
+    else {
+        Robot_Centric_drive();
+    }
     }
 
     public void stopDrive(){

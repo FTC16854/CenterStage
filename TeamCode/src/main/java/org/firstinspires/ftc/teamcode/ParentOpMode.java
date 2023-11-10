@@ -36,11 +36,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -83,11 +85,14 @@ public class ParentOpMode extends LinearOpMode {
     private DcMotor leftFront = null;
     private DcMotor leftBack = null;
 
-    private CRServo LiftServo = null;
+    private DcMotor LiftMotor = null;
     private CRServo IntakeServo = null;
     private Servo PushyServo = null;
 
+    private DigitalChannel StopLiftSwitch = null;
+
     IMU imu;
+
 
 
     //Other Global Variables
@@ -107,11 +112,13 @@ public class ParentOpMode extends LinearOpMode {
         leftFront = hardwareMap.get(DcMotor.class, "lf_drive");
         leftBack = hardwareMap.get(DcMotor.class, "lb_drive");
 
-        LiftServo = hardwareMap.get(CRServo.class, "lift");
+        LiftMotor = hardwareMap.get(DcMotor.class, "lift");
 
         IntakeServo = hardwareMap.get(CRServo.class, "InT_Servo");
 
         PushyServo = hardwareMap.get(Servo.class, "push_servo");
+
+        StopLiftSwitch = hardwareMap.get(DigitalChannel.class, "stop_lift_switch");
 
 
 
@@ -124,11 +131,13 @@ public class ParentOpMode extends LinearOpMode {
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
 
-        LiftServo.setDirection(DcMotorSimple.Direction.FORWARD);
+        LiftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         IntakeServo.setDirection(CRServo.Direction.FORWARD);
 
         PushyServo.setDirection(Servo.Direction.FORWARD);
+
+        StopLiftSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         //Set range for special Servos
         //wobbleLift.scaleRange(0.15,.85); //Savox PWM range is between 0.8 and 2.2 ms. REV Hub puts out 0.5-2.5ms.
@@ -155,6 +164,7 @@ public class ParentOpMode extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
+
 
         initialize();
 
@@ -204,13 +214,22 @@ public class ParentOpMode extends LinearOpMode {
     }
 
 
+    //Buttons
+    public boolean PositionOneButton() { return gamepad1.a; }
 
+    public boolean PositionTwoButton() { return gamepad1.b; }
 
-    // Buttons
+    public boolean PositionThreeButton() { return gamepad1.y; }
 
-    public boolean Intake_button() { return gamepad1.y; }
-    public boolean Intake_Reverse() { return gamepad1.a; }
-
+    public boolean Intake_button() { return gamepad1.left_bumper; }
+    public boolean Intake_Reverse() {
+        if (gamepad1.left_trigger >= .5) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     public boolean Lift_Up() { return gamepad1.right_bumper; }
     public boolean Lift_Down() {
         if (gamepad1.right_trigger >= .5) {
@@ -220,20 +239,15 @@ public class ParentOpMode extends LinearOpMode {
         }
     }
 
+
+
     public boolean drive_toggle_button(){
         return gamepad1.start;
     }
 
-    public boolean Push_Out() { return gamepad1.left_bumper;}
-    public boolean Push_Back() {
-        if (gamepad1.left_trigger >= .5){
-            return true;
-        } else{
-            return false;
-        }
-
-    }
-    public boolean Push_Mid() { return gamepad1.dpad_up;}
+    public boolean Push_Out() { return gamepad1.dpad_up;}
+    public boolean Push_Back(){ return gamepad1.dpad_down;}
+    public boolean Push_Mid() { return gamepad1.dpad_right;}
 
 
     public boolean emergencyButtons(){
@@ -359,22 +373,42 @@ public class ParentOpMode extends LinearOpMode {
     /*****************************/
     //More Methods (Functions)
 
+    public boolean StopLift (){
+        return StopLiftSwitch.getState();
+    }
 
+    public int GetLiftPosition(){
+        telemetry.addData("Lift_position", GetLiftPosition());
+        return LiftMotor.getCurrentPosition();
+        }
+
+
+    public void ResetEncoder() {
+        if (StopLift() == true) {
+            LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+    }
     public void Run_Lift() {
         double liftPower = .75;
         if(Lift_Up() == true) {
-            LiftServo.setPower(liftPower);
+            LiftMotor.setPower(liftPower);
         }
-        if (Lift_Down() == true) {
-            LiftServo.setPower(-liftPower);
+        if (Lift_Down() == true && StopLift() == false) {
+            LiftMotor.setPower(-liftPower);
         }
         else{
             liftPower = 0;
-            LiftServo.setPower(liftPower);
+            LiftMotor.setPower(liftPower);
         }
 
         telemetry.addData("lift power ", liftPower);
 
+    }
+
+    public void GoPositionOne(){
+        if ( PositionOneButton() == true){
+            LiftMotor.setTargetPosition(120);
+        }
     }
 
     public void RunIntake(){
@@ -469,6 +503,7 @@ public class ParentOpMode extends LinearOpMode {
             gyroReset();
         }
     }
+
 
 
 

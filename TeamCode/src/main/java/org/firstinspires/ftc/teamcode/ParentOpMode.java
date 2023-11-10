@@ -137,7 +137,6 @@ public class ParentOpMode extends LinearOpMode {
 
         PushyServo.setDirection(Servo.Direction.FORWARD);
 
-        StopLiftSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         //Set range for special Servos
         //wobbleLift.scaleRange(0.15,.85); //Savox PWM range is between 0.8 and 2.2 ms. REV Hub puts out 0.5-2.5ms.
@@ -147,6 +146,10 @@ public class ParentOpMode extends LinearOpMode {
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+        //Set digital I/O modes
+        StopLiftSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         gyroInitialize();
 
@@ -369,10 +372,8 @@ public class ParentOpMode extends LinearOpMode {
     }
 
 
-
     /*****************************/
-    //More Methods (Functions)
-
+    //Lift Methods (Functions)
     public boolean StopLift (){
         return StopLiftSwitch.getState();
     }
@@ -380,7 +381,7 @@ public class ParentOpMode extends LinearOpMode {
     public int GetLiftPosition(){
         telemetry.addData("Lift_position", GetLiftPosition());
         return LiftMotor.getCurrentPosition();
-        }
+    }
 
 
     public void ResetEncoder() {
@@ -410,6 +411,10 @@ public class ParentOpMode extends LinearOpMode {
             LiftMotor.setTargetPosition(120);
         }
     }
+
+
+    /*****************************/
+    //More Methods (Functions)
 
     public void RunIntake(){
         double intakePower = .75;
@@ -467,11 +472,7 @@ public class ParentOpMode extends LinearOpMode {
 
     /*****************************/
     //Encoder Functions
-   /*
-    public double getLeftVerticalEncoder(){
-        return rightFront.getCurrentPosition();
-    }
-    */
+
 
     /*****************************/
     //Gyro Functions
@@ -512,8 +513,8 @@ public class ParentOpMode extends LinearOpMode {
     //  Helper Class - Create Toggle Class
     //      - add debounce
     //  Change intake to motors - not using servos
-    //  use combination of buttons for pushypushpush thingy for OUT Position to save on buttons and accidental drops
-    //  Incorporate sensor(s) for lift (encoder, limit switch, string potentiometer) to allow set heights/positions
+    //  use combination of buttons for pushypushpush thingy for OUT Position to save on buttons and prevent accidental pixel drops?
+    //  Incorporate sensor(s) for lift (encoder, limit switch) to allow set heights/positions
 
     //TODO: AUTONOMOUS
     //  Holonomic Auto Drive function (time-based)
@@ -524,4 +525,5 @@ public class ParentOpMode extends LinearOpMode {
     //                  - Align with Tag (Strafe)?
     //                  - Rotate toward Tag?
     //  Computer Vision/ML/TensorFlow - Object Detection (Team Prop)
+    //                  - See https://teachablemachine.withgoogle.com/train/image
 }

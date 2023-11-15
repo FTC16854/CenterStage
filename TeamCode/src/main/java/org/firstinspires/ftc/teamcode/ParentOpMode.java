@@ -29,8 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -41,15 +39,12 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.GyroSensor;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
+import java.lang.annotation.Target;
 
 
 /**
@@ -85,11 +80,14 @@ public class ParentOpMode extends LinearOpMode {
     private DcMotor leftFront = null;
     private DcMotor leftBack = null;
 
-    private DcMotor LiftMotor = null;
+    private DcMotor LiftMotorRight = null;
+
+    private DcMotor LiftMotorLeft = null;
+
     private CRServo IntakeServo = null;
     private Servo PushyServo = null;
 
-    private DigitalChannel StopLiftSwitch = null;
+    private DigitalChannel LiftIsBottomNowOkSwitch = null;
 
     IMU imu;
 
@@ -98,8 +96,17 @@ public class ParentOpMode extends LinearOpMode {
     //Other Global Variables
     //put global variables here...
     public double ServoPosition = 0;
-    //
-    //
+
+    public int LiftPosition;
+
+    int Bottom = 0000;
+    int Low = 100;
+    int Middle = 200;
+    int High = 300;
+    int NOSTOPITURBREAKINGMEAAA= 400;
+
+
+
 
     Toggle drive_Toggle = new Toggle(drive_toggle_button());
 
@@ -112,13 +119,15 @@ public class ParentOpMode extends LinearOpMode {
         leftFront = hardwareMap.get(DcMotor.class, "lf_drive");
         leftBack = hardwareMap.get(DcMotor.class, "lb_drive");
 
-        LiftMotor = hardwareMap.get(DcMotor.class, "lift");
+        LiftMotorLeft = hardwareMap.get(DcMotor.class, "lift_left");
+
+        LiftMotorRight = hardwareMap.get(DcMotor.class, "lift_right");
 
         IntakeServo = hardwareMap.get(CRServo.class, "InT_Servo");
 
         PushyServo = hardwareMap.get(Servo.class, "push_servo");
 
-        StopLiftSwitch = hardwareMap.get(DigitalChannel.class, "stop_lift_switch");
+        LiftIsBottomNowOkSwitch = hardwareMap.get(DigitalChannel.class, "stop_lift_switch");
 
 
 
@@ -131,7 +140,8 @@ public class ParentOpMode extends LinearOpMode {
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
 
-        LiftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        LiftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        LiftMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         IntakeServo.setDirection(CRServo.Direction.FORWARD);
 
@@ -147,9 +157,11 @@ public class ParentOpMode extends LinearOpMode {
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        LiftMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LiftMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Set digital I/O modes
-        StopLiftSwitch.setMode(DigitalChannel.Mode.INPUT);
+        LiftIsBottomNowOkSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         gyroInitialize();
 
@@ -225,7 +237,7 @@ public class ParentOpMode extends LinearOpMode {
     public boolean PositionThreeButton() { return gamepad1.y; }
 
     public boolean Intake_button() { return gamepad1.left_bumper; }
-    public boolean Intake_Reverse() {
+    public boolean Intake_Reverse_Button() {
         if (gamepad1.left_trigger >= .5) {
             return true;
         }
@@ -233,8 +245,9 @@ public class ParentOpMode extends LinearOpMode {
             return false;
         }
     }
-    public boolean Lift_Up() { return gamepad1.right_bumper; }
-    public boolean Lift_Down() {
+    public boolean Lift_Up_Button() { return gamepad1.right_bumper; }
+    public boolean Lift_Down_Button(
+    ) {
         if (gamepad1.right_trigger >= .5) {
             return true;}
         else{
@@ -248,9 +261,9 @@ public class ParentOpMode extends LinearOpMode {
         return gamepad1.start;
     }
 
-    public boolean Push_Out() { return gamepad1.dpad_up;}
-    public boolean Push_Back(){ return gamepad1.dpad_down;}
-    public boolean Push_Mid() { return gamepad1.dpad_right;}
+    public boolean Push_Out_Button() { return gamepad1.dpad_up;}
+    public boolean Push_Back_Button(){ return gamepad1.dpad_down;}
+    public boolean Push_Mid_Button() { return gamepad1.dpad_right;}
 
 
     public boolean emergencyButtons(){
@@ -374,42 +387,67 @@ public class ParentOpMode extends LinearOpMode {
 
     /*****************************/
     //Lift Methods (Functions)
-    public boolean StopLift (){
-        return StopLiftSwitch.getState();
+    public boolean BottomLiftSwitch(){
+        return LiftIsBottomNowOkSwitch.getState();
     }
 
     public int GetLiftPosition(){
         telemetry.addData("Lift_position", GetLiftPosition());
-        return LiftMotor.getCurrentPosition();
+        return LiftMotorRight.getCurrentPosition();
     }
 
 
-    public void ResetEncoder() {
-        if (StopLift() == true) {
-            LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
+    public void ResetEncoders() {
+
+            LiftMotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            LiftMotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
     }
     public void Run_Lift() {
         double liftPower = .75;
-        if(Lift_Up() == true) {
-            LiftMotor.setPower(liftPower);
+        if(Lift_Up_Button() == true) {
+            LiftMotorRight.setPower(liftPower);
         }
-        if (Lift_Down() == true && StopLift() == false) {
-            LiftMotor.setPower(-liftPower);
+        if (Lift_Down_Button() == true && BottomLiftSwitch() == false) {
+            LiftMotorRight.setPower(-liftPower);
         }
         else{
             liftPower = 0;
-            LiftMotor.setPower(liftPower);
+            LiftMotorRight.setPower(liftPower);
         }
 
         telemetry.addData("lift power ", liftPower);
-
+// do something w/ dis different (based on position) :3
     }
+public void HomingLift(){
+        LiftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LiftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-    public void GoPositionOne(){
-        if ( PositionOneButton() == true){
-            LiftMotor.setTargetPosition(120);
+        while (!BottomLiftSwitch()){
+            LiftMotorLeft.setPower(.2);
+            LiftMotorRight.setPower(.2);
         }
+
+        LiftMotorLeft.setPower(0);
+        LiftMotorRight.setPower(0);
+
+        ResetEncoders();
+        LiftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LiftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+}
+    public void GoPosition(int LiftSpecificPlaceYouAreGoingHereNow){
+        double LiftSpeed = .35;
+
+        LiftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LiftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+      LiftMotorLeft.setTargetPosition(LiftSpecificPlaceYouAreGoingHereNow);
+      LiftMotorRight.setTargetPosition(LiftSpecificPlaceYouAreGoingHereNow);
+
+
+
+      LiftMotorLeft.setPower(LiftSpeed);
+      LiftMotorRight.setPower(LiftSpeed);
     }
 
 
@@ -422,7 +460,7 @@ public class ParentOpMode extends LinearOpMode {
             IntakeServo.setPower(intakePower);
         }
 
-        if(Intake_Reverse() == true) {
+        if(Intake_Reverse_Button() == true) {
             IntakeServo.setPower(-intakePower);
         }
         else{ intakePower = 0;
@@ -438,15 +476,15 @@ public class ParentOpMode extends LinearOpMode {
         double MIDDLE = .57;
         double IN = .33;
         String pushyposition = "?";
-        if(Push_Out() == true) {
+        if(Push_Out_Button() == true) {
             pushyposition = "OUT";
             PushyServo.setPosition(OUT);
         }
-        if (Push_Back() == true) {
+        if (Push_Back_Button() == true) {
             pushyposition = "IN";
             PushyServo.setPosition(IN);
         }
-        if(Push_Mid() == true) {
+        if(Push_Mid_Button() == true) {
             pushyposition = "MIDDLE";
             PushyServo.setPosition(MIDDLE);
         }

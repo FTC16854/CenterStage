@@ -89,6 +89,8 @@ public class ParentOpMode extends LinearOpMode {
 
     private DigitalChannel LiftIsBottomNowOkSwitch = null;
 
+    private Servo WristLeft = null;
+    private Servo WristRight = null;
     IMU imu;
 
 
@@ -129,6 +131,8 @@ public class ParentOpMode extends LinearOpMode {
 
         LiftIsBottomNowOkSwitch = hardwareMap.get(DigitalChannel.class, "stop_lift_switch");
 
+        WristLeft = hardwareMap.get(Servo.class, "wrist_left");
+        WristRight = hardwareMap.get(Servo.class, "wrist_right");
 
 
         //Set motor run mode (if using SPARK Mini motor controllers)
@@ -146,6 +150,9 @@ public class ParentOpMode extends LinearOpMode {
         IntakeServo.setDirection(CRServo.Direction.FORWARD);
 
         PushyServo.setDirection(Servo.Direction.FORWARD);
+
+        WristLeft.setDirection(Servo.Direction.FORWARD);
+        WristRight.setDirection(Servo.Direction.FORWARD );
 
 
         //Set range for special Servos
@@ -281,7 +288,9 @@ public class ParentOpMode extends LinearOpMode {
         return gamepad1.back;
     }
 
-
+    public boolean WristScore(){return gamepad2.x;}
+    public boolean WristRest(){return gamepad2.a;}
+    public boolean WristClimb(){return gamepad2.b;}
 
     public boolean PaperAirplaneButton(){
         return gamepad1.x;
@@ -404,7 +413,7 @@ public class ParentOpMode extends LinearOpMode {
 
     }
     public void Run_Lift() {
-        double liftPower = .75;
+        double liftPower = .75; 
         if(Lift_Up_Button() == true) {
             LiftMotorRight.setPower(liftPower);
         }
@@ -449,6 +458,44 @@ public void HomingLift(){
       LiftMotorLeft.setPower(LiftSpeed);
       LiftMotorRight.setPower(LiftSpeed);
     }
+
+    public void WristHomePOS(){
+    if (WristRest() == true && LiftPosition >= Low){
+        WristRight.setPosition(0.4);
+        WristLeft.setPosition(0.4);
+    }
+
+    if (WristRest() == true && LiftPosition < Low){
+        GoPosition(Low);
+        if(LiftMotorLeft.isBusy() == false && LiftMotorRight.isBusy() == false){
+            WristLeft.setPosition(.4);
+            WristRight.setPosition(.4);
+        }
+    }
+
+    }
+
+    public void WristScorePOS(){
+        if (WristScore() == true && LiftPosition >= Low){
+            WristRight.setPosition(0);
+            WristLeft.setPosition(0);
+        }
+        if(WristScore() == true && LiftPosition < Low) {
+            GoPosition(Low);
+            if (LiftMotorLeft.isBusy() == false && LiftMotorRight.isBusy() == false) {
+                WristLeft.setPosition(0);
+                WristRight.setPosition(0);
+            }
+        }
+    }
+    public void WristClimbPOS(){
+        if (WristClimb() == true){
+            WristLeft.setPosition(0.75);
+            WristRight.setPosition(0.75);
+        }
+    }
+
+
 
 
     /*****************************/

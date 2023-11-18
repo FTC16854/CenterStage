@@ -42,6 +42,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 
@@ -100,10 +101,18 @@ public class ParentOpMode extends LinearOpMode {
     public int LiftPosition;
 
     int Bottom = 0000;
+    int MiniMinimum = 20;
+    int MinimumToMoveWrist = 50;
     int Low = 100;
     int Middle = 200;
     int High = 300;
     int NOSTOPITURBREAKINGMEAAA= 400;
+
+
+    double ScorePOS = 0;
+    double HomePOS = .4;
+    double ClimbPOS = .75;
+
 
 
 
@@ -142,7 +151,7 @@ public class ParentOpMode extends LinearOpMode {
         leftBack.setDirection(DcMotor.Direction.FORWARD);
 
         LiftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        LiftMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        LiftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         IntakeServo.setDirection(CRServo.Direction.FORWARD);
 
@@ -331,6 +340,28 @@ public class ParentOpMode extends LinearOpMode {
         rightBack.setPower(rightBackWheel);
 
     }
+    public void Auto_Field_Centric_drive (double Magnitude, double driveAngle, double rotation){
+        double Rotation = rotation;
+
+        double DriveAngle = driveAngle - Math.toRadians(gyroAngle());
+        double magnitude = Magnitude;
+
+        double leftFrontWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) + (Rotation));
+        double rightFrontWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) - Rotation);
+        double leftBackWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) + (Rotation));
+        double rightBackWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) - Rotation);
+
+        leftFront.setPower(leftFrontWheel);
+        leftBack.setPower(leftBackWheel);
+        rightFront.setPower(rightFrontWheel);
+        rightBack.setPower(rightBackWheel);
+    }
+    public void Auto_Field_Centric_drive_time (double Magnitude, double driveAngle, double rotation, int timeMS){
+        Auto_Field_Centric_drive(Magnitude, driveAngle, rotation);
+        sleep(timeMS);
+        stopDrive();
+    }
+
 
     public void Robot_Centric_drive (){
         double Rotation = -right_sticky_x();
@@ -383,20 +414,28 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     public void Run_Lift() {
-        double liftPower = .75; 
-        if(Lift_Up_Button() == true) {
-            LiftMotorRight.setPower(liftPower);
+        double liftPower = .75;
+        int ABit = 20;
+        if (Lift_Up_Button() == true) {
+          LiftPosition = LiftPosition + ABit;
         }
-        if (Lift_Down_Button() == true && BottomLiftSwitch() == false) {
-            LiftMotorRight.setPower(-liftPower);
+        if (Lift_Down_Button() == true) {
+           LiftPosition = LiftPosition - ABit;
         }
-        else{
-            liftPower = 0;
-            LiftMotorRight.setPower(liftPower);
+        if (LiftPosition > NOSTOPITURBREAKINGMEAAA){
+            LiftPosition = NOSTOPITURBREAKINGMEAAA;
+        }
+        if (LiftPosition < MiniMinimum) {
+            LiftPosition = MiniMinimum;
+        }
+        GoPosition(LiftPosition);
+        if (BottomLiftSwitch() == true){
+            ResetEncoders();
+
         }
 
         telemetry.addData("lift power ", liftPower);
-        // do something w/ dis different (based on position) :3
+
     }
 
     public void HomingLift(){
@@ -428,45 +467,26 @@ public class ParentOpMode extends LinearOpMode {
         LiftMotorRight.setPower(LiftSpeed);
     }
 
-    public void WristHomePOS(){
-        if (WristRestButton() == true && LiftPosition >= Low){
-            WristRight.setPosition(0.4);
-            WristLeft.setPosition(0.4);
-        }
-
-        if (WristRestButton() == true && LiftPosition < Low){
-            GoPosition(Low);
-
-            if(LiftMotorLeft.isBusy() == false && LiftMotorRight.isBusy() == false){
-                WristLeft.setPosition(.4);
-                WristRight.setPosition(.4);
+    public void WristPOS(){
+        if (GetLiftPosition() >= MinimumToMoveWrist){
+            if (WristScoreButton() == true){
+            WristRight.setPosition(ScorePOS);
+            WristLeft.setPosition(ScorePOS);
+            }
+            if (WristRestButton() == true){
+                WristRight.setPosition(HomePOS);
+                WristLeft.setPosition(HomePOS);
+            }
+            if (WristClimbButton() == true){
+                WristLeft.setPosition(ClimbPOS);
+                WristRight.setPosition(ClimbPOS);
             }
         }
 
-    }
-
-    public void WristScorePOS(){
-        if (WristScoreButton() == true && LiftPosition >= Low){
-            WristRight.setPosition(0);
-            WristLeft.setPosition(0);
-        }
-        if(WristScoreButton() == true && LiftPosition < Low) {
-            GoPosition(Low);
-            if (LiftMotorLeft.isBusy() == false && LiftMotorRight.isBusy() == false) {
-                WristLeft.setPosition(0);
-                WristRight.setPosition(0);
-            }
+        if (GetLiftPosition() < MinimumToMoveWrist){
+            GoPosition(MinimumToMoveWrist + 25);
         }
     }
-
-    public void WristClimbPOS(){
-        if (WristClimbButton() == true){
-            WristLeft.setPosition(0.75);
-            WristRight.setPosition(0.75);
-        }
-    }
-
-
 
 
     /*****************************/

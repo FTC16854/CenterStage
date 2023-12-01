@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -42,6 +43,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
@@ -83,7 +85,7 @@ public class ParentOpMode extends LinearOpMode {
 
     private DcMotor LiftMotorLeft = null;
 
-    private CRServo IntakeServo = null;
+    private DcMotorEx IntakeMotor = null;
     private Servo PushyServo = null;
 
     private DigitalChannel LiftIsBottomNowOkSwitch = null;
@@ -91,6 +93,8 @@ public class ParentOpMode extends LinearOpMode {
     private Servo WristLeft = null;
     private Servo WristRight = null;
     IMU imu;
+
+    private Servo AirplaneLauncher = null;
 
 
 
@@ -131,7 +135,7 @@ public class ParentOpMode extends LinearOpMode {
         LiftMotorLeft = hardwareMap.get(DcMotor.class, "lift_left");
         LiftMotorRight = hardwareMap.get(DcMotor.class, "lift_right");
 
-        IntakeServo = hardwareMap.get(CRServo.class, "InT_Servo");
+        IntakeMotor = hardwareMap.get(DcMotorEx.class, "int_motor");
 
         PushyServo = hardwareMap.get(Servo.class, "push_servo");
 
@@ -139,6 +143,8 @@ public class ParentOpMode extends LinearOpMode {
 
         WristLeft = hardwareMap.get(Servo.class, "wrist_left");
         WristRight = hardwareMap.get(Servo.class, "wrist_right");
+
+        AirplaneLauncher = hardwareMap.get(Servo.class, "airplane_launcher");
 
 
         //Set motor run mode (if using SPARK Mini motor controllers)
@@ -153,9 +159,11 @@ public class ParentOpMode extends LinearOpMode {
         LiftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         LiftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        IntakeServo.setDirection(CRServo.Direction.FORWARD);
+        IntakeMotor.setDirection(DcMotor.Direction.FORWARD);
 
         PushyServo.setDirection(Servo.Direction.FORWARD);
+
+        AirplaneLauncher.setDirection(Servo.Direction.FORWARD);
 
         WristLeft.setDirection(Servo.Direction.FORWARD);
         WristRight.setDirection(Servo.Direction.FORWARD );
@@ -173,6 +181,8 @@ public class ParentOpMode extends LinearOpMode {
         LiftMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LiftMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        IntakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         //Set digital I/O modes
         LiftIsBottomNowOkSwitch.setMode(DigitalChannel.Mode.INPUT);
 
@@ -181,6 +191,7 @@ public class ParentOpMode extends LinearOpMode {
         //Update Driver Station Status Message after init
         telemetry.addData("Status:", "Initialized");
         telemetry.update();
+
     }
 
 
@@ -294,9 +305,8 @@ public class ParentOpMode extends LinearOpMode {
         return gamepad1.back;
     }
 
-    public boolean PaperAirplaneButton(){
-        return gamepad1.x;
-    }
+    public boolean AirplaneButton(){
+        return gamepad1.x;}
 
     /****************************/
     // Emergency Stop
@@ -495,17 +505,26 @@ public class ParentOpMode extends LinearOpMode {
     public void RunIntake(){
         double intakePower = .75;
         if(Intake_button() == true) {
-            IntakeServo.setPower(intakePower);
+            IntakeMotor.setPower(intakePower);
         }
 
         if(Intake_Reverse_Button() == true) {
-            IntakeServo.setPower(-intakePower);
+            IntakeMotor.setPower(-intakePower);
+
+            telemetry.addData(" CurrentTooHigh, Going Reverse", IntakeMotor.getCurrent(CurrentUnit.AMPS));
         }
+        /*
+        if(IntakeMotor.getCurrent(CurrentUnit.AMPS) > 314159){
+            IntakeMotor.setPower(-intakePower);
+        }
+        */
         else{ intakePower = 0;
-            IntakeServo.setPower(intakePower);
+            IntakeMotor.setPower(intakePower);
         }
 
         telemetry.addData("intake power ", intakePower);
+        telemetry.addData("DcMotor Intake Current", IntakeMotor.getCurrent(CurrentUnit.AMPS));
+
 
     }
 
@@ -540,6 +559,12 @@ public class ParentOpMode extends LinearOpMode {
         PushyServo.setPosition(ServoPosition);
 
         telemetry.addData("Push placement ", ServoPosition);
+    }
+
+    public void airplanePewPew(){
+        if (AirplaneButton() == true){
+            AirplaneLauncher.setPosition(1.0);
+        }
     }
 
 

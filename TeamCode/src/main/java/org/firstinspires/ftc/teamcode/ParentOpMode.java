@@ -348,7 +348,6 @@ public class ParentOpMode extends LinearOpMode {
         leftBack.setPower(leftBackWheel);
         rightFront.setPower(rightFrontWheel);
         rightBack.setPower(rightBackWheel);
-
     }
     public void Auto_Field_Centric_drive (double Magnitude, double driveAngle, double rotation){
         double Rotation = rotation;

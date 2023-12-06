@@ -159,7 +159,7 @@ public class ParentOpMode extends LinearOpMode {
         LiftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         LiftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        IntakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        IntakeMotor.setDirection(DcMotor.Direction.REVERSE);
 
         PushyServo.setDirection(Servo.Direction.FORWARD);
 

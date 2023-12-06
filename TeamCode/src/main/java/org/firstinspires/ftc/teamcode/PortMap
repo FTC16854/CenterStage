@@ -1,13 +1,14 @@
-Motor Ports                    Configuration Names
-    0   RF Motor                rf_drive
-    1   RB Motor                rb_drive
-    2   LF Motor                lf_drive
-    3   LB Motor                lb_drive
+Control Hub
+Motor Ports                    Configuration Names          color
+    0   LB Motor                lb_drive                    Green
+    1   FL Motor                fl_drive                    Blue
+    2   FR Motor                fr_drive                    Yellow
+    3   RB Motor                rb_drive                    Purple
 
 Servo Ports
-    0   InT_Servo
-    1   lift
-    2   push_servo
+    0
+    1
+    2
     3
     4
     5
@@ -17,4 +18,24 @@ I2C Ports
     Bus 2
     Bus 3
 
+---------------------------------------------------------
+---------------------------------------------------------
+Expansion Hub
+Motor Ports                    Configuration Names   color
+    0 Intake                  int_motor              neon yellow
+    1 Lift-Left               lift_left              pink
+    2
+    3 Lift-Right              lift_right             red
 
+Servo Ports
+    0
+    1
+    2 PushyServo            push_servo             aqua
+    3 Wrist Right           wrist_right            silver
+    4 Wrist Left            wrist_left             gold
+    5 Airplane Launcher     airplane_launcher      orange
+
+I2C Ports
+    Bus 1
+    Bus 2
+    Bus 3

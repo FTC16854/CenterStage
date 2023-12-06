@@ -47,7 +47,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection Easy", group = "Concept")
-//@Disabled
+//@Disabledt
 public class VisionParentOpMode extends ParentOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -61,6 +61,8 @@ public class VisionParentOpMode extends ParentOpMode {
      * The variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
+
+    double SpikePlace;
 
     @Override
     public void runOpMode() {
@@ -157,11 +159,34 @@ public class VisionParentOpMode extends ParentOpMode {
         return y;
     }
 
+    public double SpikeMarkSelector() {
 
+        if (GetPiecePositionX() >= 427){
+            SpikePlace = 3;
+        }
+        if (GetPiecePositionX() > 214 && GetPiecePositionX() < 427){
+            SpikePlace = 2;
+        }
+        if (GetPiecePositionX() <= 214){
+            SpikePlace = 1;
+        }
+        return SpikePlace;
+    }
 
+    public void AutoMoveSpikePos1(){
+        if (SpikeMarkSelector() == 1){
+            Auto_Field_Centric_drive_time(.35, 180, 0, 1000);
+            Auto_Field_Centric_drive_time(.35, 90, 0, 1000);
+            GoPosition(Low);
+//TODO add wrist and intake drop command here
+        }
+    }
+    public void AutoMoveSpikePos2(){
 
+    }
+    public void AutoMoveSpikePos3(){
 
-
+    }
 
 
 

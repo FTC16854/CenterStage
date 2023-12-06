@@ -497,7 +497,14 @@ public class ParentOpMode extends LinearOpMode {
         }
     }
 
+    //TODO make auto wrist command
+    /*
+    public void AutoWristPOS(){
+                WristRight.setPosition();
+                WristLeft.setPosition();
 
+    }
+*/
     /*****************************/
     //More Methods (Functions)
 

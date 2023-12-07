@@ -104,6 +104,7 @@ public class ParentOpMode extends LinearOpMode {
 
     public int LiftPosition;
 
+    //Lift Positions
     int Bottom = 0000;
     int MiniMinimum = 20;
     int MinimumToMoveWrist = 50;
@@ -112,16 +113,12 @@ public class ParentOpMode extends LinearOpMode {
     int High = 300;
     int NOSTOPITURBREAKINGMEAAA= 400;
 
-
+    //Wrist Positions
     double ScorePOS = 0;
     double HomePOS = .4;
     double ClimbPOS = .75;
 
-
-
-
-
-    Toggle drive_Toggle = new Toggle(drive_toggle_button());
+    //Toggle drive_Toggle = new Toggle(drive_toggle_button());
 
     public void initialize(){
         // Initialize the hardware variables. Note that the strings used here as parameters
@@ -389,7 +386,7 @@ public class ParentOpMode extends LinearOpMode {
         rightBack.setPower(rightBackWheel);
 
     }
-
+/*
     public void driveToggle(){
         boolean fieldCentric = drive_Toggle.Toggle_Button();
 
@@ -400,6 +397,7 @@ public class ParentOpMode extends LinearOpMode {
             Robot_Centric_drive();
         }
     }
+*/
 
     public void stopDrive(){
         tankDrive(0,0);

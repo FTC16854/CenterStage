@@ -451,7 +451,7 @@ public class ParentOpMode extends LinearOpMode {
         LiftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LiftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while (!BottomLiftSwitch()){
+        while (!BottomLiftSwitch() && opModeIsActive()){
             LiftMotorLeft.setPower(.3);
             LiftMotorRight.setPower(.3);
         }

@@ -14,6 +14,7 @@ Servo Ports
     5
 
 I2C Ports
+    Bus 0                   imu
     Bus 1
     Bus 2
     Bus 3

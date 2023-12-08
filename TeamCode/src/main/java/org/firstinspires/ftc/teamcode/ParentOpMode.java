@@ -331,14 +331,14 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     public void Field_Centric_drive (){
-        double Rotation = -right_sticky_x();
+        double Rotation = right_sticky_x();
 
         double DriveAngle = Math.atan2(left_sticky_y(), left_sticky_x()) - Math.toRadians(gyroAngle());
         double magnitude = Math.hypot(left_sticky_x(), left_sticky_y());
 
-        double leftFrontWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) + (Rotation));
+        double leftFrontWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) + Rotation);
         double rightFrontWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) - Rotation);
-        double leftBackWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) + (Rotation));
+        double leftBackWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) + Rotation);
         double rightBackWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) - Rotation);
 
         leftFront.setPower(leftFrontWheel);
@@ -352,10 +352,10 @@ public class ParentOpMode extends LinearOpMode {
         double DriveAngle = driveAngle - Math.toRadians(gyroAngle());
         double magnitude = Magnitude;
 
-        double leftFrontWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) + (Rotation));
-        double rightFrontWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) - Rotation);
-        double leftBackWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) + (Rotation));
-        double rightBackWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) - Rotation);
+        double leftFrontWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4)) + Rotation;
+        double rightFrontWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4)) - Rotation;
+        double leftBackWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4)) + Rotation;
+        double rightBackWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4)) - Rotation;
 
         leftFront.setPower(leftFrontWheel);
         leftBack.setPower(leftBackWheel);
@@ -411,8 +411,10 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     public int GetLiftPosition(){
-        telemetry.addData("Lift_position", GetLiftPosition());
-        return LiftMotorRight.getCurrentPosition();
+        int liftPosiTION;
+        liftPosiTION = LiftMotorRight.getCurrentPosition();
+        telemetry.addData("Lift_position", liftPosiTION);
+        return liftPosiTION;
     }
 
     public void ResetEncoders() {
@@ -508,23 +510,28 @@ public class ParentOpMode extends LinearOpMode {
 
     public void RunIntake(){
         double intakePower = .75;
+        double currentLimit = 2.5;  //may need to increase and/or account for momentary current spikes
+
         if(Intake_button() == true) {
             IntakeMotor.setPower(intakePower);
         }
+        else{
+            if(Intake_Reverse_Button() == true) {
+                IntakeMotor.setPower(-intakePower);
 
-        if(Intake_Reverse_Button() == true) {
+            }
+            else{ intakePower = 0;
+                IntakeMotor.setPower(intakePower);
+            }
+        }
+
+        /*  //move this into Intake_Button() section of if-statement. Probably need to add a tiny sleep (300ms?)
+        if(IntakeMotor.getCurrent(CurrentUnit.AMPS) > currentLimit){
             IntakeMotor.setPower(-intakePower);
-
             telemetry.addData(" CurrentTooHigh, Going Reverse", IntakeMotor.getCurrent(CurrentUnit.AMPS));
         }
-        /*
-        if(IntakeMotor.getCurrent(CurrentUnit.AMPS) > 314159){
-            IntakeMotor.setPower(-intakePower);
-        }
         */
-        else{ intakePower = 0;
-            IntakeMotor.setPower(intakePower);
-        }
+
 
         telemetry.addData("intake power ", intakePower);
         telemetry.addData("DcMotor Intake Current", IntakeMotor.getCurrent(CurrentUnit.AMPS));
@@ -566,8 +573,14 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     public void airplanePewPew(){
+        double firePosition = 1;
+        double cockedPosition = 0;
+
         if (AirplaneButton() == true){
-            AirplaneLauncher.setPosition(1.0);
+            AirplaneLauncher.setPosition(firePosition);
+        }
+        else{
+            AirplaneLauncher.setPosition(cockedPosition);
         }
     }
 
@@ -584,8 +597,8 @@ public class ParentOpMode extends LinearOpMode {
     private void gyroInitialize() {
 
         imu = hardwareMap.get(IMU.class, "imu");
-        RevHubOrientationOnRobot.LogoFacingDirection LogoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection USBDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot.LogoFacingDirection LogoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+        RevHubOrientationOnRobot.UsbFacingDirection USBDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         RevHubOrientationOnRobot TotalDirection = new RevHubOrientationOnRobot(LogoDirection, USBDirection);
         IMU.Parameters IMUParameters = new IMU.Parameters(TotalDirection);

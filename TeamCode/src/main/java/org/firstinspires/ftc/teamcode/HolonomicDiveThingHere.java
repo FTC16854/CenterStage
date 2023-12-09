@@ -69,9 +69,10 @@ public class HolonomicDiveThingHere extends ParentOpMode {
         // Init loop - optional
         while(opModeInInit()){
             // Code in here will loop continuously until OpMode is started
+            HomingLift();
         }
 
-//        HomingLift();
+
 
         // Wait for the game to start (driver presses PLAY) - May not be needed if using an init Loop
         waitForStart();

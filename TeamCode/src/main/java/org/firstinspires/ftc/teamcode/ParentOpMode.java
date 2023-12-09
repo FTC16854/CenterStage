@@ -107,11 +107,11 @@ public class ParentOpMode extends LinearOpMode {
     //Lift Positions
     int Bottom = 0000;
     int MiniMinimum = 20;
-    int MinimumToMoveWrist = 50;
-    int Low = 1000;
-    int Middle = 2000;
-    int High = 3005;
-    int NOSTOPITURBREAKINGMEAAA= 8000;
+    int MinimumToMoveWrist = 1000;
+    int Low = 2000;
+    int Middle = 5000;
+    int High = 15000;
+    int NOSTOPITURBREAKINGMEAAA= 20000;
     //Pixel Pocket POS
     double PluckPOS = 0000;
     double PickPOS = 1.000;
@@ -431,7 +431,7 @@ public class ParentOpMode extends LinearOpMode {
 
     public void Run_Lift() {
         double liftPower = .75;
-        int ABit = 20;
+        int ABit = 50;
         if (Lift_Up_Button() == true) {
           LiftPosition = LiftPosition + ABit;
         }
@@ -444,8 +444,11 @@ public class ParentOpMode extends LinearOpMode {
         if (LiftPosition < MiniMinimum) {
             LiftPosition = MiniMinimum;
         }
-        /* //kills thungs. doesn't let lift move when at bottom
-        GoPosition(LiftPosition);
+
+        // Add in preset position buttons
+
+        GoPosition(LiftPosition); //accidentally commented this out :(
+        /* //kills things. doesn't let lift move when at bottom
         if (BottomLiftSwitch() == true){
             ResetEncoders();
         }
@@ -460,8 +463,10 @@ public class ParentOpMode extends LinearOpMode {
         LiftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while (!BottomLiftSwitch() && opModeInInit()){
-            LiftMotorLeft.setPower(.3);
-            LiftMotorRight.setPower(.3);
+            LiftMotorLeft.setPower(.4);
+            LiftMotorRight.setPower(.4);
+            telemetry.addData("Homing.", "Going down...");
+            telemetry.addData("Lift Height:", GetLiftPosition());
         }
 
         LiftMotorLeft.setPower(0);

@@ -71,7 +71,7 @@ public class HolonomicDiveThingHere extends ParentOpMode {
             // Code in here will loop continuously until OpMode is started
         }
 
-        //HomingLift();
+//        HomingLift();
 
         // Wait for the game to start (driver presses PLAY) - May not be needed if using an init Loop
         waitForStart();
@@ -80,8 +80,8 @@ public class HolonomicDiveThingHere extends ParentOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
              Field_Centric_drive();
-//             WristPOS();  // Problem Wth Code
-             ////Run_Lift();
+             WristPOS();
+             Run_Lift();
              RunIntake();
              PushPush();
              airplanePewPew();

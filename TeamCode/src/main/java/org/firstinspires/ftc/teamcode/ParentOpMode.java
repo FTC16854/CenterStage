@@ -96,7 +96,7 @@ public class ParentOpMode extends LinearOpMode {
 
     private Servo AirplaneLauncher = null;
 
-
+    private Servo PixelPocket = null;
 
     //Other Global Variables
     //put global variables here...
@@ -108,15 +108,18 @@ public class ParentOpMode extends LinearOpMode {
     int Bottom = 0000;
     int MiniMinimum = 20;
     int MinimumToMoveWrist = 50;
-    int Low = 100;
-    int Middle = 200;
-    int High = 300;
-    int NOSTOPITURBREAKINGMEAAA= 400;
+    int Low = 1000;
+    int Middle = 2000;
+    int High = 3005;
+    int NOSTOPITURBREAKINGMEAAA= 8000;
+    //Pixel Pocket POS
+    double PluckPOS = 0000;
+    double PickPOS = 1.000;
 
     //Wrist Positions
     double ScorePOS = 0;
-    double HomePOS = .4;
-    double ClimbPOS = .75;
+    double HomePOS = .3;
+    double ClimbPOS = .85;
 
     //Toggle drive_Toggle = new Toggle(drive_toggle_button());
 
@@ -143,6 +146,8 @@ public class ParentOpMode extends LinearOpMode {
 
         AirplaneLauncher = hardwareMap.get(Servo.class, "airplane_launcher");
 
+        PixelPocket = hardwareMap.get(Servo.class, "pixel_pocket");
+
 
         //Set motor run mode (if using SPARK Mini motor controllers)
 
@@ -160,9 +165,11 @@ public class ParentOpMode extends LinearOpMode {
 
         PushyServo.setDirection(Servo.Direction.FORWARD);
 
-        AirplaneLauncher.setDirection(Servo.Direction.FORWARD);
+        AirplaneLauncher.setDirection(Servo.Direction.REVERSE);
 
-        WristLeft.setDirection(Servo.Direction.FORWARD);
+        PixelPocket.setDirection(Servo.Direction.FORWARD);
+
+        WristLeft.setDirection(Servo.Direction.REVERSE);
         WristRight.setDirection(Servo.Direction.FORWARD );
 
 
@@ -336,10 +343,10 @@ public class ParentOpMode extends LinearOpMode {
         double DriveAngle = Math.atan2(left_sticky_y(), left_sticky_x()) - Math.toRadians(gyroAngle());
         double magnitude = Math.hypot(left_sticky_x(), left_sticky_y());
 
-        double leftFrontWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) + Rotation);
-        double rightFrontWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) - Rotation);
-        double leftBackWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) + Rotation);
-        double rightBackWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) - Rotation);
+        double leftFrontWheel = magnitude*Math.cos(DriveAngle - (Math.PI/4)) + Rotation;
+        double rightFrontWheel = magnitude*Math.sin(DriveAngle - (Math.PI/4)) - Rotation;
+        double leftBackWheel = magnitude*Math.sin(DriveAngle - (Math.PI/4)) + Rotation;
+        double rightBackWheel = magnitude*Math.cos(DriveAngle - (Math.PI/4)) - Rotation;
 
         leftFront.setPower(leftFrontWheel);
         leftBack.setPower(leftBackWheel);
@@ -437,11 +444,12 @@ public class ParentOpMode extends LinearOpMode {
         if (LiftPosition < MiniMinimum) {
             LiftPosition = MiniMinimum;
         }
+        /* //kills thungs. doesn't let lift move when at bottom
         GoPosition(LiftPosition);
         if (BottomLiftSwitch() == true){
             ResetEncoders();
-
         }
+        */
 
         telemetry.addData("lift power ", liftPower);
 
@@ -451,7 +459,7 @@ public class ParentOpMode extends LinearOpMode {
         LiftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LiftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while (!BottomLiftSwitch() && opModeIsActive()){
+        while (!BottomLiftSwitch() && opModeInInit()){
             LiftMotorLeft.setPower(.3);
             LiftMotorRight.setPower(.3);
         }
@@ -464,36 +472,41 @@ public class ParentOpMode extends LinearOpMode {
         LiftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void GoPosition(int LiftSpecificPlaceYouAreGoingHereNow){
-        double LiftSpeed = .35;
-
-        LiftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        LiftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        double LiftSpeed = .56;
 
         LiftMotorLeft.setTargetPosition(LiftSpecificPlaceYouAreGoingHereNow);
         LiftMotorRight.setTargetPosition(LiftSpecificPlaceYouAreGoingHereNow);
+
+        LiftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LiftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         LiftMotorLeft.setPower(LiftSpeed);
         LiftMotorRight.setPower(LiftSpeed);
     }
 
     public void WristPOS(){
-        if (GetLiftPosition() >= MinimumToMoveWrist){
+        if (true){
+//        if (GetLiftPosition() >= MinimumToMoveWrist){
             if (WristScoreButton() == true){
             WristRight.setPosition(ScorePOS);
             WristLeft.setPosition(ScorePOS);
+            telemetry.addData("Wrist:","SCORE");
             }
             if (WristRestButton() == true){
                 WristRight.setPosition(HomePOS);
                 WristLeft.setPosition(HomePOS);
+                telemetry.addData("Wrist:","HOME");
             }
             if (WristClimbButton() == true){
                 WristLeft.setPosition(ClimbPOS);
                 WristRight.setPosition(ClimbPOS);
+                telemetry.addData("Wrist:","CLIMB");
             }
         }
-
-        if (GetLiftPosition() < MinimumToMoveWrist){
-            GoPosition(MinimumToMoveWrist + 25);
+        if (WristClimbButton() || WristRestButton() || WristScoreButton()){
+            if (GetLiftPosition() < MinimumToMoveWrist){
+              GoPosition(MinimumToMoveWrist + 25);
+            }
         }
     }
 
@@ -514,14 +527,16 @@ public class ParentOpMode extends LinearOpMode {
 
         if(Intake_button() == true) {
             IntakeMotor.setPower(intakePower);
+            PixelPocket.setPosition(PickPOS);
         }
         else{
             if(Intake_Reverse_Button() == true) {
                 IntakeMotor.setPower(-intakePower);
-
+                PixelPocket.setPosition(PickPOS);
             }
             else{ intakePower = 0;
                 IntakeMotor.setPower(intakePower);
+                PixelPocket.setPosition(PluckPOS);
             }
         }
 
@@ -573,7 +588,7 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     public void airplanePewPew(){
-        double firePosition = 1;
+        double firePosition = .5;
         double cockedPosition = 0;
 
         if (AirplaneButton() == true){

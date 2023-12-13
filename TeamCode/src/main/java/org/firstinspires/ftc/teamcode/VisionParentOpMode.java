@@ -177,7 +177,7 @@ public class VisionParentOpMode extends ParentOpMode {
         if (SpikeMarkSelector() == 1){
             Auto_Field_Centric_drive_time(.35, 180, 0, 1000);
             Auto_Field_Centric_drive_time(.35, 90, 0, 1000);
-            GoPosition(Low);
+            GoPosition(FirstLine);
 //TODO add wrist and intake drop command here
         }
     }

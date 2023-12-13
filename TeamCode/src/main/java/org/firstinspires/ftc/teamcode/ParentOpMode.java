@@ -108,9 +108,9 @@ public class ParentOpMode extends LinearOpMode {
     int Bottom = 0000;
     int MiniMinimum = 20;
     int MinimumToMoveWrist = 1000;
-    int Low = 2000;
-    int Middle = 5000;
-    int High = 15000;
+    int FirstLine = 2000;
+    int SecondLine = 5000;
+    int ThirdLine = 15000;
     int NOSTOPITURBREAKINGMEAAA= 20000;
     //Pixel Pocket POS
     double PluckPOS = 0000;
@@ -120,7 +120,10 @@ public class ParentOpMode extends LinearOpMode {
     double ScorePOS = 0;
     double HomePOS = .3;
     double ClimbPOS = .85;
-
+// pushy positions
+    double OUT = .68;
+    double MIDDLE = .57;
+    double IN = .33;
     //Toggle drive_Toggle = new Toggle(drive_toggle_button());
 
     public void initialize(){
@@ -258,9 +261,9 @@ public class ParentOpMode extends LinearOpMode {
 
 
     //Buttons
-    public boolean PositionOneButton() { return gamepad1.a; }
-    public boolean PositionTwoButton() { return gamepad1.b; }
-    public boolean PositionThreeButton() { return gamepad1.y; }
+    public boolean FirstLineButton() { return gamepad1.a; }
+    public boolean SecondLineButton() { return gamepad1.b; }
+    public boolean ThirdLineButton() { return gamepad1.y; }
 
     public boolean Intake_button() { return gamepad1.left_bumper; }
     public boolean Intake_Reverse_Button() {
@@ -444,6 +447,16 @@ public class ParentOpMode extends LinearOpMode {
         if (LiftPosition < MiniMinimum) {
             LiftPosition = MiniMinimum;
         }
+        if (FirstLineButton() == true) {
+            LiftPosition = FirstLine;
+        }
+        if (SecondLineButton() == true) {
+            LiftPosition = SecondLine;
+        }
+        if (ThirdLineButton() == true) {
+            LiftPosition = ThirdLine;
+        }
+
 
         // Add in preset position buttons
 
@@ -516,13 +529,14 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     //TODO make auto wrist command
-    /*
-    public void AutoWristPOS(){
-                WristRight.setPosition();
-                WristLeft.setPosition();
+
+    public void AutoWristPOS(double AutoWristPOS){
+                WristRight.setPosition(AutoWristPOS);
+                WristLeft.setPosition(AutoWristPOS);
+
 
     }
-*/
+
     /*****************************/
     //More Methods (Functions)
 
@@ -533,7 +547,13 @@ public class ParentOpMode extends LinearOpMode {
         if(Intake_button() == true) {
             IntakeMotor.setPower(intakePower);
             PixelPocket.setPosition(PickPOS);
+
+            if(IntakeMotor.getCurrent(CurrentUnit.AMPS) > currentLimit){
+                IntakeMotor.setPower(-intakePower);
+                telemetry.addData(" CurrentTooHigh, Going Reverse", IntakeMotor.getCurrent(CurrentUnit.AMPS));
+            }
         }
+
         else{
             if(Intake_Reverse_Button() == true) {
                 IntakeMotor.setPower(-intakePower);
@@ -560,9 +580,7 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     public void PushPush(){
-        double OUT = .68;
-        double MIDDLE = .57;
-        double IN = .33;
+
         String pushyposition = "?";
         if(Push_Out_Button() == true) {
             pushyposition = "OUT";
@@ -578,7 +596,11 @@ public class ParentOpMode extends LinearOpMode {
         }
         telemetry.addData("pushy placement ", pushyposition);
     }
+    public void AutoPushyPush(double AutoPushPOS){
+        PushyServo.setPosition(AutoPushPOS);
 
+
+    }
 
     public void servoTestTest(){
         if (gamepad1.dpad_up){

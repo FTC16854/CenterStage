@@ -179,6 +179,9 @@ public class VisionParentOpMode extends ParentOpMode {
             Auto_Field_Centric_drive_time(.35, 90, 0, 1000);
             GoPosition(FirstLine);
 //TODO add wrist and intake drop command here
+            AutoWristPOS(ScorePOS);
+            sleep(580);
+            AutoPushyPush(OUT);
         }
     }
     public void AutoMoveSpikePos2(){

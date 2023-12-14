@@ -465,6 +465,9 @@ public class ParentOpMode extends LinearOpMode {
         if (BottomLiftSwitch() == true){
             ResetEncoders();
         }
+        if (BottomLiftSwitch() == true && other thing?){
+        encoders r reset
+        }
         */
 
         telemetry.addData("lift power ", liftPower);
@@ -491,15 +494,17 @@ public class ParentOpMode extends LinearOpMode {
     }
     public void GoPosition(int LiftSpecificPlaceYouAreGoingHereNow){
         double LiftSpeed = .56;
-
+        double LeftLiftSpeed = .86;
+        double RightLiftSpeed = 1.0;
+        // LEft iS leader
         LiftMotorLeft.setTargetPosition(LiftSpecificPlaceYouAreGoingHereNow);
-        LiftMotorRight.setTargetPosition(LiftSpecificPlaceYouAreGoingHereNow);
+        LiftMotorRight.setTargetPosition(LiftMotorLeft.getCurrentPosition());
 
         LiftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LiftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        LiftMotorLeft.setPower(LiftSpeed);
-        LiftMotorRight.setPower(LiftSpeed);
+        LiftMotorLeft.setPower(LeftLiftSpeed);
+        LiftMotorRight.setPower(RightLiftSpeed);
     }
 
     public void WristPOS(){
@@ -548,10 +553,10 @@ public class ParentOpMode extends LinearOpMode {
             IntakeMotor.setPower(intakePower);
             PixelPocket.setPosition(PickPOS);
 
-            if(IntakeMotor.getCurrent(CurrentUnit.AMPS) > currentLimit){
+            /*if(IntakeMotor.getCurrent(CurrentUnit.AMPS) > currentLimit){
                 IntakeMotor.setPower(-intakePower);
                 telemetry.addData(" CurrentTooHigh, Going Reverse", IntakeMotor.getCurrent(CurrentUnit.AMPS));
-            }
+            }*/
         }
 
         else{

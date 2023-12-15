@@ -91,9 +91,7 @@ public class HolonomicDiveThingHere extends ParentOpMode {
             telemetry.addData("lift_height", GetLiftPosition());  //problem with function
             telemetry.addData( "lift_goal", LiftPosition);
             telemetry.addData("lift_bottom_trigger", BottomLiftSwitch());
-            telemetry.addData("Pixel Pluck POS", GetPixelPocketPOS());
-            telemetry.addData(" left_wrist_position", GetLeftWristPOS());
-            telemetry.addData("right_wrist_position", GetRightWristPOS());
+
 
 
 

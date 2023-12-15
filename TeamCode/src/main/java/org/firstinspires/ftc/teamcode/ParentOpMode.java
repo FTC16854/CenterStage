@@ -533,6 +533,7 @@ public class ParentOpMode extends LinearOpMode {
         }
     }
 
+
     //TODO make auto wrist command
 
     public void AutoWristPOS(double AutoWristPOS){
@@ -580,6 +581,7 @@ public class ParentOpMode extends LinearOpMode {
 
         telemetry.addData("intake power ", intakePower);
         telemetry.addData("DcMotor Intake Current", IntakeMotor.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("Pixel Pluck POS", PixelPocket.getPosition());
 
 
     }

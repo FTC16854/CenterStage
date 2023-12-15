@@ -52,9 +52,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * override the ParentOpMode runOpMode() method.
  **/
 
-@TeleOp(name="HolonomicDriveThingHere Opmode", group="Linear Opmode")
+@TeleOp(name="HolonomicDiveLeft Opmode", group="Linear Opmode")
 //@Disabled
-public class HolonomicDiveThingHere extends ParentOpMode {
+public class AutoHolonomicDiveLeft extends ParentOpMode {
 
     /**
      * runOpMode() will be overridden in child OpMode.
@@ -80,21 +80,13 @@ public class HolonomicDiveThingHere extends ParentOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-             Field_Centric_drive();
-             WristPOS();
-             Run_Lift();
-             RunIntake();
-             PushPush();
-             airplanePewPew();
 
-            telemetry.addData("angle ", gyroAngle());
-            telemetry.addData("lift_height", GetLiftPosition());  //problem with function
-            telemetry.addData( "lift_goal", LiftPosition);
-            telemetry.addData("lift_bottom_trigger", BottomLiftSwitch());
-            telemetry.addData("Pixel Pluck POS", GetPixelPocketPOS());
-            telemetry.addData(" left_wrist_position", GetLeftWristPOS());
-            telemetry.addData("right_wrist_position", GetRightWristPOS());
-
+          Auto_Field_Centric_drive_time(.5, 180, 0, 3000);
+            GoPosition(FirstLine);
+            sleep(1000);
+            AutoWristPOS(ScorePOS);
+            sleep(1000);
+            AutoPushyPush(OUT);
 
 
             ManualResetGyro();

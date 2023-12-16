@@ -33,7 +33,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -44,7 +43,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 
@@ -109,24 +107,29 @@ public class ParentOpMode extends LinearOpMode {
 
     //Lift Positions
     int Bottom = 0000;
-    int MiniMinimum = 20;
+    int MiniMinimum = 0;
     int MinimumToMoveWrist = 7870;
-    int FirstLine = 2000;
-    int SecondLine = 5000;
-    int ThirdLine = 15000;
+    int MinimumToIntake = 4069;
+    int FirstLine = 18700;
+    int SecondLine = 31900;
+    int ThirdLine = 40000;
     int NOSTOPITURBREAKINGMEAAA= 40000;
+
+
     //Pixel Pocket POS
     double PluckPOS = .037;
     double PickPOS = .5;
 
     //Wrist Positions
+    double WristPOS;
     double ScorePOS = 0;
     double HomePOS = .325;
-    double ClimbPOS = .85;
+    double DropPOS = .12;
 // pushy positions
     double OUT = .68;
     double MIDDLE = .57;
     double IN = .33;
+
     //Toggle drive_Toggle = new Toggle(drive_toggle_button());
 
     public void initialize(){
@@ -264,43 +267,31 @@ public class ParentOpMode extends LinearOpMode {
 
 
     //Buttons
-    public boolean FirstLineButton() { return gamepad1.a; }
-    public boolean SecondLineButton() { return gamepad1.b; }
-    public boolean ThirdLineButton() { return gamepad1.y; }
+    public boolean FirstLineButton() { return gamepad1.a || gamepad2.dpad_down; }
+    public boolean SecondLineButton() { return gamepad1.b || gamepad2.dpad_left; }
+    public boolean ThirdLineButton() { return gamepad1.y || gamepad2.dpad_up; }
 
-    public boolean Intake_button() { return gamepad1.left_bumper; }
-    public boolean Intake_Reverse_Button() {
-    if (gamepad1.left_trigger >= .5) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
+    public boolean Intake_Reverse_Button() { return gamepad1.right_trigger >= 0.5;}
+    public boolean Intake_button() { return gamepad1.right_bumper;}
 
-    public boolean Lift_Up_Button() { return gamepad1.right_bumper; }
 
-    public boolean Lift_Down_Button(
-    ) {
-        if (gamepad1.right_trigger >= .5) {
-            return true;}
-        else{
-            return false;
-        }
-    }
+    public boolean Lift_Up_Button() { return gamepad1.left_trigger >= .5; }
+
+    public boolean Lift_Down_Button() {return gamepad1.left_bumper;}
 
     public boolean drive_toggle_button(){
         return gamepad1.start;
     }
 
-    public boolean Push_Out_Button() { return gamepad1.dpad_up;}
-    public boolean Push_Back_Button(){ return gamepad1.dpad_down;}
-    public boolean Push_Mid_Button() { return gamepad1.dpad_right;}
+    public boolean Push_Out_Button() { return gamepad1.dpad_up || (gamepad2.left_trigger >= .5);}
+    public boolean Push_Back_Button(){ return gamepad1.dpad_down || gamepad2.right_bumper;}
+    public boolean Push_Mid_Button() { return gamepad1.dpad_right || gamepad2.left_bumper;}
 
-    public boolean WristScoreButton(){return gamepad2.x;}
+    public boolean WristScoreButton(){return gamepad2.b;}
     public boolean WristRestButton(){return gamepad2.a;}
-    public boolean WristClimbButton(){return gamepad2.b;}
-
+    public boolean WristDropButton(){return gamepad2.y;}
+    public boolean WristUpButton(){return false;} //something
+    public boolean WristDownButton(){return false;} //something
     public boolean emergencyButtons(){
         // check for combination of buttons to be pressed before returning true
        if(gamepad1.b == true && gamepad1.y == true){
@@ -312,11 +303,20 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     public boolean yawResetButton(){
-        return gamepad1.back;
+        return gamepad1.back || gamepad2.back;
     }
 
-    public boolean AirplaneButton(){
-        return gamepad1.x;}
+    public boolean AirplaneButton() {
+        if (gamepad1.x == true && gamepad1.dpad_left == true){
+            return true;
+        }
+        else {
+            return false;
+        }
+
+
+
+    }
 
     /****************************/
     // Emergency Stop
@@ -425,7 +425,7 @@ public class ParentOpMode extends LinearOpMode {
 
     public int GetLiftPosition(){
         int liftPosiTION;
-        liftPosiTION = LiftMotorRight.getCurrentPosition();
+        liftPosiTION = LiftMotorLeft.getCurrentPosition();
         telemetry.addData("Lift_position", liftPosiTION);
         return liftPosiTION;
     }
@@ -436,8 +436,8 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     public void Run_Lift() {
-        double liftPower = .75;
-        int ABit = 50;
+
+        int ABit = 100;
         if (Lift_Up_Button() == true) {
           LiftPosition = LiftPosition + ABit;
         }
@@ -473,7 +473,9 @@ public class ParentOpMode extends LinearOpMode {
         }
         */
 
-        telemetry.addData("lift power ", liftPower);
+        telemetry.addData("Lift Left Pos:",LiftMotorLeft.getCurrentPosition());
+        telemetry.addData(" Lift_Right_POS", LiftMotorRight.getCurrentPosition());
+
 
     }
 
@@ -496,12 +498,20 @@ public class ParentOpMode extends LinearOpMode {
         Yang_Yin_GoPosition(LiftPositionLeft, LiftPositionRight);
 
         telemetry.addData("lift power ", liftPower);
+        telemetry.addData("Lift Left Pos:",LiftMotorLeft.getCurrentPosition());
+        telemetry.addData(" Lift_Right_POS", LiftMotorRight.getCurrentPosition());
+
 
     }
 
     public void HomingLift(){
         LiftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LiftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        PixelPocket.setPosition(PluckPOS);
+        AutoWristPOS(HomePOS);
+        AutoPushyPush(IN);
+
 
         while (!BottomLiftSwitch() && opModeInInit()){
             LiftMotorLeft.setPower(-.4);
@@ -518,8 +528,7 @@ public class ParentOpMode extends LinearOpMode {
         LiftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void GoPosition(int LiftSpecificPlaceYouAreGoingHereNow){
-        double LiftSpeed = .56;
-        double LeftLiftSpeed = .86;
+        double LeftLiftSpeed = .95;
         double RightLiftSpeed = 1.0;
         // LEft iS leader
         LiftMotorLeft.setTargetPosition(LiftSpecificPlaceYouAreGoingHereNow);
@@ -551,26 +560,41 @@ public class ParentOpMode extends LinearOpMode {
 //        if (true){
         if (GetLiftPosition() >= MinimumToMoveWrist){
             if (WristScoreButton() == true){
-            WristRight.setPosition(ScorePOS);
-            WristLeft.setPosition(ScorePOS);
-            telemetry.addData("Wrist:","SCORE");
+                WristPOS = ScorePOS;
+                telemetry.addData("Wrist:","SCORE");
             }
             if (WristRestButton() == true){
-                WristRight.setPosition(HomePOS);
-                WristLeft.setPosition(HomePOS);
+               WristPOS = HomePOS;
                 telemetry.addData("Wrist:","HOME");
             }
-            if (WristClimbButton() == true){
-                WristLeft.setPosition(ClimbPOS);
-                WristRight.setPosition(ClimbPOS);
-                telemetry.addData("Wrist:","CLIMB");
+            if (WristDropButton() == true){
+                WristPOS = DropPOS;
+                telemetry.addData("Wrist:","Drop");
             }
+            if (WristUpButton() == true){
+                WristPOS = WristPOS + .05;
+            }
+            if (WristDownButton() == true){
+                WristPOS = WristPOS - .05;
+            }
+            WristLeft.setPosition(WristPOS);
+            WristRight.setPosition(WristPOS);
+            telemetry.addData(" wrist_position", WristPOS);
+
         }
+
+
+
+
+
+
+
+        /*
         if (WristClimbButton() || WristRestButton() || WristScoreButton()){
             if (GetLiftPosition() < MinimumToMoveWrist){
               GoPosition(MinimumToMoveWrist + 25);
             }
-        }
+        }*/
     }
 
 
@@ -583,16 +607,21 @@ public class ParentOpMode extends LinearOpMode {
 
     }
 
+
     /*****************************/
     //More Methods (Functions)
 
     public void RunIntake(){
-        double intakePower = .75;
+        double intakePower = 1;
         double currentLimit = 2.5;  //may need to increase and/or account for momentary current spikes
 
         if(Intake_button() == true) {
             IntakeMotor.setPower(intakePower);
             PixelPocket.setPosition(PickPOS);
+            PushyServo.setPosition(IN);
+            if(GetLiftPosition() < MinimumToIntake){
+                LiftPosition = MinimumToIntake + 50;
+            }
 
             /*if(IntakeMotor.getCurrent(CurrentUnit.AMPS) > currentLimit){
                 IntakeMotor.setPower(-intakePower);
@@ -602,6 +631,8 @@ public class ParentOpMode extends LinearOpMode {
 
         else{
             if(Intake_Reverse_Button() == true) {
+
+                PushyServo.setPosition(IN);
                 IntakeMotor.setPower(-intakePower);
                 PixelPocket.setPosition(PickPOS);
             }

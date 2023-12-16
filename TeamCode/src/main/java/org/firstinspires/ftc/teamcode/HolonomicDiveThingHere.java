@@ -88,7 +88,7 @@ public class HolonomicDiveThingHere extends ParentOpMode {
              airplanePewPew();
 
             telemetry.addData("angle ", gyroAngle());
-            telemetry.addData("lift_height", GetLiftPosition());  //problem with function
+//            telemetry.addData("lift_height", GetLiftPosition());
             telemetry.addData( "lift_goal", LiftPosition);
             telemetry.addData("lift_bottom_trigger", BottomLiftSwitch());
 

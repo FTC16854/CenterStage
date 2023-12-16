@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
@@ -53,9 +52,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * override the ParentOpMode runOpMode() method.
  **/
 
-@Autonomous(name="HolonomicDiveForwardRight Opmode", group="Linear Opmode")
+@TeleOp(name="TestLiftTest Opmode", group="Linear Opmode")
 //@Disabled
-public class AutoHolonomicDiveForwardRight extends ParentOpMode {
+public class TestTest extends ParentOpMode {
 
     /**
      * runOpMode() will be overridden in child OpMode.
@@ -70,10 +69,7 @@ public class AutoHolonomicDiveForwardRight extends ParentOpMode {
         // Init loop - optional
         while(opModeInInit()){
             // Code in here will loop continuously until OpMode is started
-            HomingLift();
         }
-
-
 
         // Wait for the game to start (driver presses PLAY) - May not be needed if using an init Loop
         waitForStart();
@@ -81,16 +77,13 @@ public class AutoHolonomicDiveForwardRight extends ParentOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-          Auto_Field_Centric_drive_time(.5, 90, 0, 600);
-          Auto_Field_Centric_drive_time(.5, 0, 0, 5000);
-            GoPosition(FirstLine);
-            sleep(1000);
-            AutoWristPOS(ScorePOS);
-            sleep(1000);
-            AutoPushyPush(OUT);
+            tankDrive(left_sticky_y(),right_sticky_y());
+            RunIntake();
+          //  PushPush();
+            servoTestTest();
+            Run_Lift_Yin_Yang();
 
 
-            ManualResetGyro();
             checkEmergencyStop();
             // Stops motors and Terminates if buttons are pressed
 

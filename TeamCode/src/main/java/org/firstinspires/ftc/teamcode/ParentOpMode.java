@@ -103,18 +103,21 @@ public class ParentOpMode extends LinearOpMode {
     public double ServoPosition = 0;
 
     public int LiftPosition;
+    public int LiftPositionLeft;
+    public int LiftPositionRight;
+
 
     //Lift Positions
     int Bottom = 0000;
     int MiniMinimum = 20;
-    int MinimumToMoveWrist = 1000;
+    int MinimumToMoveWrist = 7870;
     int FirstLine = 2000;
     int SecondLine = 5000;
     int ThirdLine = 15000;
-    int NOSTOPITURBREAKINGMEAAA= 20000;
+    int NOSTOPITURBREAKINGMEAAA= 40000;
     //Pixel Pocket POS
-    double PluckPOS = 0000;
-    double PickPOS = 1.000;
+    double PluckPOS = .037;
+    double PickPOS = .5;
 
     //Wrist Positions
     double ScorePOS = 0;
@@ -474,13 +477,35 @@ public class ParentOpMode extends LinearOpMode {
 
     }
 
+    public void Run_Lift_Yin_Yang() {
+        double liftPower = .75;
+        int ABit = 50;
+        if (Lift_Up_Button() == true) {
+            LiftPositionRight = LiftPositionRight + ABit;
+        }
+        if (Lift_Down_Button() == true) {
+            LiftPositionRight = LiftPositionRight - ABit;
+        }
+        if (gamepad1.left_bumper == true) {
+            LiftPositionLeft = LiftPositionLeft + ABit;
+        }
+        if (gamepad1.left_trigger >= .5) {
+            LiftPositionLeft = LiftPositionLeft - ABit;
+        }
+
+        Yang_Yin_GoPosition(LiftPositionLeft, LiftPositionRight);
+
+        telemetry.addData("lift power ", liftPower);
+
+    }
+
     public void HomingLift(){
         LiftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LiftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while (!BottomLiftSwitch() && opModeInInit()){
-            LiftMotorLeft.setPower(.4);
-            LiftMotorRight.setPower(.4);
+            LiftMotorLeft.setPower(-.4);
+            LiftMotorRight.setPower(-.4);
             telemetry.addData("Homing.", "Going down...");
             telemetry.addData("Lift Height:", GetLiftPosition());
         }
@@ -499,6 +524,21 @@ public class ParentOpMode extends LinearOpMode {
         // LEft iS leader
         LiftMotorLeft.setTargetPosition(LiftSpecificPlaceYouAreGoingHereNow);
         LiftMotorRight.setTargetPosition(LiftMotorLeft.getCurrentPosition());
+
+        LiftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LiftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        LiftMotorLeft.setPower(LeftLiftSpeed);
+        LiftMotorRight.setPower(RightLiftSpeed);
+    }
+
+    public void Yang_Yin_GoPosition(int LeftLiftIsGoingHere, int RightLiftIsGoingHere){
+        double LiftSpeed = .56;
+        double LeftLiftSpeed = .80;
+        double RightLiftSpeed = .80;
+
+        LiftMotorLeft.setTargetPosition(LeftLiftIsGoingHere);
+        LiftMotorRight.setTargetPosition(RightLiftIsGoingHere);
 
         LiftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LiftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);

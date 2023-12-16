@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
@@ -52,7 +53,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * override the ParentOpMode runOpMode() method.
  **/
 
-@TeleOp(name="HolonomicDiveLeft Opmode", group="Linear Opmode")
+@Autonomous(name="HolonomicDiveLeft Opmode", group="Linear Opmode")
 //@Disabled
 public class AutoHolonomicDiveLeft extends ParentOpMode {
 

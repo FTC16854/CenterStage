@@ -121,7 +121,7 @@ public class ParentOpMode extends LinearOpMode {
 
     //Wrist Positions
     double ScorePOS = 0;
-    double HomePOS = .3;
+    double HomePOS = .325;
     double ClimbPOS = .85;
 // pushy positions
     double OUT = .68;
@@ -548,8 +548,8 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     public void WristPOS(){
-        if (true){
-//        if (GetLiftPosition() >= MinimumToMoveWrist){
+//        if (true){
+        if (GetLiftPosition() >= MinimumToMoveWrist){
             if (WristScoreButton() == true){
             WristRight.setPosition(ScorePOS);
             WristLeft.setPosition(ScorePOS);

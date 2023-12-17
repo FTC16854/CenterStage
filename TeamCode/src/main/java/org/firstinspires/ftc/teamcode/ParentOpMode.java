@@ -121,10 +121,12 @@ public class ParentOpMode extends LinearOpMode {
     double PickPOS = .5;
 
     //Wrist Positions
-    double WristPOS;
     double ScorePOS = 0;
     double HomePOS = .325;
     double DropPOS = .12;
+
+    double WristPOS = HomePOS;
+
 // pushy positions
     double OUT = .68;
     double MIDDLE = .57;
@@ -285,7 +287,7 @@ public class ParentOpMode extends LinearOpMode {
 
     public boolean Push_Out_Button() { return gamepad1.dpad_up || (gamepad2.left_trigger >= .5);}
     public boolean Push_Back_Button(){ return gamepad1.dpad_down || gamepad2.right_bumper;}
-    public boolean Push_Mid_Button() { return gamepad1.dpad_right || gamepad2.left_bumper;}
+    public boolean Push_Mid_Button() { return gamepad1.dpad_left || gamepad2.left_bumper;}
 
     public boolean WristScoreButton(){return gamepad2.b;}
     public boolean WristRestButton(){return gamepad2.a;}
@@ -362,13 +364,13 @@ public class ParentOpMode extends LinearOpMode {
     public void Auto_Field_Centric_drive (double Magnitude, double driveAngle, double rotation){
         double Rotation = rotation;
 
-        double DriveAngle = driveAngle - Math.toRadians(gyroAngle());
+        double DriveAngle = Math.toRadians(driveAngle) - Math.toRadians(gyroAngle());
         double magnitude = Magnitude;
 
-        double leftFrontWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4)) + Rotation;
-        double rightFrontWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4)) - Rotation;
-        double leftBackWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4)) + Rotation;
-        double rightBackWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4)) - Rotation;
+        double leftFrontWheel = magnitude*Math.cos(DriveAngle - (Math.PI/4)) + Rotation;
+        double rightFrontWheel = magnitude*Math.sin(DriveAngle - (Math.PI/4)) - Rotation;
+        double leftBackWheel = magnitude*Math.sin(DriveAngle - (Math.PI/4)) + Rotation;
+        double rightBackWheel = magnitude*Math.cos(DriveAngle - (Math.PI/4)) - Rotation;
 
         leftFront.setPower(leftFrontWheel);
         leftBack.setPower(leftBackWheel);
@@ -437,12 +439,12 @@ public class ParentOpMode extends LinearOpMode {
 
     public void Run_Lift() {
 
-        int ABit = 100;
+        int ABit = 300; //Was 100
         if (Lift_Up_Button() == true) {
-          LiftPosition = LiftPosition + ABit;
+          LiftPosition = GetLiftPosition() + ABit;
         }
         if (Lift_Down_Button() == true) {
-           LiftPosition = LiftPosition - ABit;
+           LiftPosition = GetLiftPosition() - ABit;
         }
         if (LiftPosition > NOSTOPITURBREAKINGMEAAA){
             LiftPosition = NOSTOPITURBREAKINGMEAAA;
@@ -664,13 +666,15 @@ public class ParentOpMode extends LinearOpMode {
             pushyposition = "OUT";
             PushyServo.setPosition(OUT);
         }
-        if (Push_Back_Button() == true) {
-            pushyposition = "IN";
-            PushyServo.setPosition(IN);
-        }
-        if(Push_Mid_Button() == true) {
-            pushyposition = "MIDDLE";
-            PushyServo.setPosition(MIDDLE);
+        else{
+            if(Push_Mid_Button() == true) {
+                pushyposition = "MIDDLE";
+                PushyServo.setPosition(MIDDLE);
+            }
+            else{
+                pushyposition = "IN";
+                PushyServo.setPosition(IN);
+            }
         }
         telemetry.addData("pushy placement ", pushyposition);
     }
@@ -723,6 +727,7 @@ public class ParentOpMode extends LinearOpMode {
         RevHubOrientationOnRobot TotalDirection = new RevHubOrientationOnRobot(LogoDirection, USBDirection);
         IMU.Parameters IMUParameters = new IMU.Parameters(TotalDirection);
         imu.initialize(IMUParameters);
+
     }
 
 
@@ -734,6 +739,7 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     public void gyroReset() {
+        //gyroInitialize();
         imu.resetYaw();
     }
 

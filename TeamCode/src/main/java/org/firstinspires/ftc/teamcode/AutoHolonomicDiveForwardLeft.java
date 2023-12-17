@@ -71,6 +71,7 @@ public class AutoHolonomicDiveForwardLeft extends ParentOpMode {
         while(opModeInInit()){
             // Code in here will loop continuously until OpMode is started
             HomingLift();
+            gyroReset();
         }
 
 
@@ -81,14 +82,14 @@ public class AutoHolonomicDiveForwardLeft extends ParentOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-          Auto_Field_Centric_drive_time(.5, 90, 0, 600);
-          Auto_Field_Centric_drive_time(.5, 180, 0, 5000);
-          GoPosition(FirstLine);
+          Auto_Field_Centric_drive_time(.5, 0, 0, 600);
+          Auto_Field_Centric_drive_time(.5, 270, 0, 5000);
+         /* GoPosition(FirstLine);
           sleep(1000);
           AutoWristPOS(ScorePOS);
           sleep(1000);
           AutoPushyPush(OUT);
-
+*/
 
             ManualResetGyro();
             checkEmergencyStop();

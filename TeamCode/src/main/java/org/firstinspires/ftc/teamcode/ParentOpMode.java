@@ -121,9 +121,11 @@ public class ParentOpMode extends LinearOpMode {
     double PickPOS = .5;
 
     //Wrist Positions
-    double ScorePOS = 0;
-    double HomePOS = .325;
-    double DropPOS = .12;
+    double HomePOS = .96; // //.325;
+    double DropPOS = 0.8; //.12;
+    double ScorePOS = 0.58; //0;
+    double HighScorePOS = 0.45;
+
 
     double WristPOS = HomePOS;
 
@@ -272,6 +274,8 @@ public class ParentOpMode extends LinearOpMode {
     public boolean FirstLineButton() { return gamepad1.a || gamepad2.dpad_down; }
     public boolean SecondLineButton() { return gamepad1.b || gamepad2.dpad_left; }
     public boolean ThirdLineButton() { return gamepad1.y || gamepad2.dpad_up; }
+    public boolean DownUnderButton() { return gamepad1.x;}
+    public boolean FirstLineScoreButton() {return gamepad2.x;}
 
     public boolean Intake_Reverse_Button() { return gamepad1.right_trigger >= 0.5;}
     public boolean Intake_button() { return gamepad1.right_bumper;}
@@ -461,6 +465,14 @@ public class ParentOpMode extends LinearOpMode {
         if (ThirdLineButton() == true) {
             LiftPosition = ThirdLine;
         }
+        if (DownUnderButton() == true) {
+            LiftPosition = Bottom;
+            WristPOS = HomePOS;
+        }
+        if (FirstLineScoreButton() == true) {
+            LiftPosition = FirstLine;
+            WristPOS = ScorePOS;
+        }
 
 
         // Add in preset position buttons
@@ -484,10 +496,10 @@ public class ParentOpMode extends LinearOpMode {
     public void Run_Lift_Yin_Yang() {
         double liftPower = .75;
         int ABit = 50;
-        if (Lift_Up_Button() == true) {
+        if (gamepad1.left_bumper == true) {
             LiftPositionRight = LiftPositionRight + ABit;
         }
-        if (Lift_Down_Button() == true) {
+        if (gamepad1.left_trigger >= 0.5) {
             LiftPositionRight = LiftPositionRight - ABit;
         }
         if (gamepad1.left_bumper == true) {

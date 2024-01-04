@@ -106,14 +106,15 @@ public class ParentOpMode extends LinearOpMode {
 
 
     //Lift Positions
-    int Bottom = 0000;
-    int MiniMinimum = 0;
-    int MinimumToMoveWrist = 7870;
-    int MinimumToIntake = 4069;
-    int FirstLine = 18700;
-    int SecondLine = 31900;
-    int ThirdLine = 40000;
-    int NOSTOPITURBREAKINGMEAAA= 40000;
+    int LiftGear = 4;
+    int Bottom = 0 / LiftGear;
+    int MiniMinimum = 0 / LiftGear;
+    int MinimumToMoveWrist = 7870 / LiftGear;
+    int MinimumToIntake = 4069 / LiftGear;
+    int FirstLine = 18700 / LiftGear;
+    int SecondLine = 31900 / LiftGear;
+    int ThirdLine = 40000 / LiftGear;
+    int NOSTOPITURBREAKINGMEAAA= 40000 / LiftGear;
 
 
     //Pixel Pocket POS

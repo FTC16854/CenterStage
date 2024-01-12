@@ -173,7 +173,7 @@ public class ParentOpMode extends LinearOpMode {
         leftBack.setDirection(DcMotor.Direction.FORWARD);
 
         LiftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        LiftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        LiftMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         IntakeMotor.setDirection(DcMotor.Direction.REVERSE);
 
@@ -497,10 +497,10 @@ public class ParentOpMode extends LinearOpMode {
     public void Run_Lift_Yin_Yang() {
         double liftPower = .75;
         int ABit = 50;
-        if (gamepad1.left_bumper == true) {
+        if (gamepad1.right_bumper == true) {
             LiftPositionRight = LiftPositionRight + ABit;
         }
-        if (gamepad1.left_trigger >= 0.5) {
+        if (gamepad1.right_trigger >= 0.5) {
             LiftPositionRight = LiftPositionRight - ABit;
         }
         if (gamepad1.left_bumper == true) {

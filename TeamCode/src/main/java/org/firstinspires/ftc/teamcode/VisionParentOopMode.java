@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -80,6 +82,15 @@ public class VisionParentOopMode extends ParentOpMode {
 
     @Override
     public void runOpMode() {
+
+        AprilTagProcessor tagProcessor = new AprilTagProcessor.Builder()
+                //.setDrawAxes(true)
+                //.setDrawCubeProjection(true)
+                //.setDrawTagID(true)
+                //.setDrawTagOutline(true)
+                .setLensIntrinsics(622.001f, 622.001f,319.803f, 241.251f)
+                .build();
+
 
       initDoubleVision();
 
@@ -151,7 +162,7 @@ public class VisionParentOopMode extends ParentOpMode {
 
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
+        builder.setCameraResolution(new Size(640, 480));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         builder.enableLiveView(true);
@@ -220,7 +231,8 @@ public class VisionParentOopMode extends ParentOpMode {
             builder.setCamera(BuiltinCameraDirection.BACK);
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
+        builder.setCameraResolution(new Size(640, 480));
+
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         //builder.enableLiveView(true);

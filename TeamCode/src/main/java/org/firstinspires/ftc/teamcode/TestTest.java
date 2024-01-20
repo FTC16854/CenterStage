@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * override the ParentOpMode runOpMode() method.
  **/
 
-@TeleOp(name="TestLiftTest Opmode", group="Linear Opmode")
+@TeleOp(name="TestTest Opmode", group="Linear Opmode")
 //@Disabled
 public class TestTest extends ParentOpMode {
 
@@ -77,11 +77,19 @@ public class TestTest extends ParentOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            tankDrive(left_sticky_y(),right_sticky_y());
+            //tankDrive(left_sticky_y(),right_sticky_y());
            // RunIntake();
           //  PushPush();
             servoTestTest();
             Run_Lift_Yin_Yang();
+
+
+            if(gamepad2.left_stick_button){
+                Auto_Field_Centric_drive(.5,270,0);
+            }
+            else{
+                stopDrive();
+            }
 
 
             checkEmergencyStop();

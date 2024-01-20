@@ -387,7 +387,22 @@ public class ParentOpMode extends LinearOpMode {
         sleep(timeMS);
         stopDrive();
     }
+    public void Auto_Robot_Centric_drive (double Magnitude, double driveAngle, double rotation){
+        double Rotation = rotation;
 
+        double DriveAngle = Math.toRadians(driveAngle);
+        double magnitude = Magnitude;
+
+        double leftFrontWheel = magnitude*Math.cos(DriveAngle - (Math.PI/4)) + Rotation;
+        double rightFrontWheel = magnitude*Math.sin(DriveAngle - (Math.PI/4)) - Rotation;
+        double leftBackWheel = magnitude*Math.sin(DriveAngle - (Math.PI/4)) + Rotation;
+        double rightBackWheel = magnitude*Math.cos(DriveAngle - (Math.PI/4)) - Rotation;
+
+        leftFront.setPower(leftFrontWheel);
+        leftBack.setPower(leftBackWheel);
+        rightFront.setPower(rightFrontWheel);
+        rightBack.setPower(rightBackWheel);
+    }
 
     public void Robot_Centric_drive (){
         double Rotation = -right_sticky_x();
@@ -395,10 +410,10 @@ public class ParentOpMode extends LinearOpMode {
         double DriveAngle = Math.atan2(left_sticky_y(), left_sticky_x());
         double magnitude = Math.hypot(left_sticky_x(), left_sticky_y());
 
-        double leftFrontWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) + (Rotation));
-        double rightFrontWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) - Rotation);
-        double leftBackWheel = magnitude*Math.sin(DriveAngle + (Math.PI/4) + (Rotation));
-        double rightBackWheel = magnitude*Math.cos(DriveAngle + (Math.PI/4) - Rotation);
+        double leftFrontWheel = magnitude*Math.cos(DriveAngle + Math.PI/4) + Rotation;
+        double rightFrontWheel = magnitude*Math.sin(DriveAngle + Math.PI/4) - Rotation;
+        double leftBackWheel = magnitude*Math.sin(DriveAngle + Math.PI/4) + Rotation;
+        double rightBackWheel = magnitude*Math.cos(DriveAngle + Math.PI/4) - Rotation;
 
         leftFront.setPower(leftFrontWheel);
         leftBack.setPower(leftBackWheel);

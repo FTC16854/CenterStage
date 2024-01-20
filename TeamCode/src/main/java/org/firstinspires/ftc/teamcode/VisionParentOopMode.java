@@ -81,8 +81,9 @@ public class VisionParentOopMode extends ParentOpMode {
     private VisionPortal visionPortal;
 
     @Override
-    public void runOpMode() {
 
+    public void runOpMode() {
+    initialize();
         AprilTagProcessor tagProcessor = new AprilTagProcessor.Builder()
                 //.setDrawAxes(true)
                 //.setDrawCubeProjection(true)
@@ -115,6 +116,11 @@ public class VisionParentOopMode extends ParentOpMode {
                     visionPortal.stopStreaming();
                 } else if (gamepad1.dpad_up) {
                     visionPortal.resumeStreaming();
+                }
+
+                if(gamepad2.left_stick_button == true){
+                  AprilTagDrivingAlignment(10,0, .3);
+               // Auto_Robot_Centric_drive(.5,270,0);
                 }
 
                 // Share the CPU.
@@ -196,7 +202,7 @@ public class VisionParentOopMode extends ParentOpMode {
 
 
         // Create the AprilTag processor.
-        aprilTag = new AprilTagProcessor.Builder().build();
+     aprilTag = new AprilTagProcessor.Builder().build();
 
                 // The following default settings are available to un-comment and edit as needed.
                 //.setDrawAxes(false)
@@ -228,7 +234,7 @@ public class VisionParentOopMode extends ParentOpMode {
 
         // Set the camera (webcam vs. built-in RC phone camera).
 
-            builder.setCamera(BuiltinCameraDirection.BACK);
+        builder.setCamera(BuiltinCameraDirection.BACK);
 
         // Choose a camera resolution. Not all cameras support all resolutions.
         builder.setCameraResolution(new Size(640, 480));
@@ -353,4 +359,61 @@ public class VisionParentOopMode extends ParentOpMode {
     public void AutoMoveSpikePos3(){
 
     }
+
+    public void AprilTagDrivingDistance(int TagID, double distance, double speed){
+
+        while(opModeIsActive()){
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+
+            double YdistanceToTag = 0;
+
+            for (AprilTagDetection detection : currentDetections){
+                if (detection.id == TagID){
+                    YdistanceToTag = detection.ftcPose.y;
+                }
+        }
+        if (YdistanceToTag > distance){
+            Auto_Robot_Centric_drive(speed,270,0);
+        } else{
+            stopDrive();
+            break;
+            }
+        }
+    }
+
+    public void AprilTagDrivingAlignment(int TagID, double distanceFromCenter, double speed){
+
+       double RobotCenter = -4.5;
+       
+        while(opModeIsActive()){
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            
+            double XTagPosition = 0;
+            double ToleranceOfUnsuccess= 2;
+
+            for (AprilTagDetection detection : currentDetections){
+                if (detection.id == TagID){
+                    XTagPosition = detection.ftcPose.x + RobotCenter;
+
+                }
+            }
+            if (XTagPosition > distanceFromCenter + ToleranceOfUnsuccess){
+                Auto_Robot_Centric_drive(speed,180,0);
+            }else {
+                if (XTagPosition < distanceFromCenter - ToleranceOfUnsuccess) {
+                    Auto_Robot_Centric_drive(speed, 0, 0);
+                } else {
+                    stopDrive();
+                    break;
+                }
+            }
+        }
+    }
+
 }   // end class
+
+
+
+
+//XAprilTagPositionInReferenceToTheApproximentPositionOfPercyThePrimaryNearPerfectProtecterOfPreciousAndVeryPrettyParticularPurplePixelsAlthoughWeQuestionHisLIfeDescisionsWeSupportOurFriendAsWeShouldBecausePercyIsThePrimaryRobotFriendOfProgrammersAndAllOthersThatHaveProvidedAddionalAssistenceToPercysUpbringingAsToNotBeOnTheHitListOfWhichPercyMayPossiblyPartakeInHoweverPercysHobbiesAreNotExactlyAParticularPartOfThisPrototypeConversationOfWhichExistsAsPartOfAFunctionAlthoughThisIsNotAFunctionAndInsteadAsAVariable

@@ -53,7 +53,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * override the ParentOpMode runOpMode() method.
  **/
 
-@Autonomous(name="HolonomicDiveLeft Opmode", group="Linear Opmode")
+@Autonomous(name="HolonomicDiveLeftBLUE Opmode", group="Linear Opmode")
 //@Disabled
 public class AutoHolonomicDiveLeft extends ParentOpMode {
 
@@ -83,7 +83,7 @@ public class AutoHolonomicDiveLeft extends ParentOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-          Auto_Field_Centric_drive_time(.5, 270, 0, 3000);
+          Auto_Field_Centric_drive_time(.5, 180, 0, 3000);
            /* GoPosition(FirstLine);
             sleep(1000);
             AutoWristPOS(ScorePOS);

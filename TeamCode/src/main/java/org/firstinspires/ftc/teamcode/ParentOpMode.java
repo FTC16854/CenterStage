@@ -404,6 +404,12 @@ public class ParentOpMode extends LinearOpMode {
         rightBack.setPower(rightBackWheel);
     }
 
+    public void Auto_Robot_Centric_Drive_Time (double Magnitude, double driveangle, double rotation, int timeMS){
+        Auto_Robot_Centric_drive(Magnitude, driveangle, rotation);
+        sleep(timeMS);
+        stopDrive();
+    }
+
     public void Robot_Centric_drive (){
         double Rotation = -right_sticky_x();
 
@@ -459,7 +465,7 @@ public class ParentOpMode extends LinearOpMode {
 
     public void Run_Lift() {
 
-        int ABit = 300; //Was 100
+        int ABit = 80;
         if (Lift_Up_Button() == true) {
           LiftPosition = GetLiftPosition() + ABit;
         }

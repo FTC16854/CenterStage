@@ -202,7 +202,7 @@ public class VisionParentOopMode extends ParentOpMode {
 
 
         // Create the AprilTag processor.
-     aprilTag = new AprilTagProcessor.Builder().build();
+        aprilTag = new AprilTagProcessor.Builder().build();
 
                 // The following default settings are available to un-comment and edit as needed.
                 //.setDrawAxes(false)

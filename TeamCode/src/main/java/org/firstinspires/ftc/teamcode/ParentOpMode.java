@@ -172,8 +172,8 @@ public class ParentOpMode extends LinearOpMode {
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
 
-        LiftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        LiftMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        LiftMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        LiftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         IntakeMotor.setDirection(DcMotor.Direction.REVERSE);
 
@@ -465,7 +465,7 @@ public class ParentOpMode extends LinearOpMode {
 
     public void Run_Lift() {
 
-        int ABit = 80;
+        int ABit = 250;
         if (Lift_Up_Button() == true) {
           LiftPosition = GetLiftPosition() + ABit;
         }
@@ -550,8 +550,8 @@ public class ParentOpMode extends LinearOpMode {
 
 
         while (!BottomLiftSwitch() && opModeInInit()){
-            LiftMotorLeft.setPower(-.4);
-            LiftMotorRight.setPower(-.4);
+            LiftMotorLeft.setPower(-.2);
+            LiftMotorRight.setPower(-.2);
             telemetry.addData("Homing.", "Going down...");
             telemetry.addData("Lift Height:", GetLiftPosition());
         }
@@ -781,6 +781,31 @@ public class ParentOpMode extends LinearOpMode {
         if( yawResetButton() == true) {
             gyroReset();
         }
+    }
+
+    public void gyroRotationAngle(double rotateSpeed, double angle){
+//dont use with 180 stuff cuz robot and us very confused
+        double ToleranceOfUnsuccess = 2;
+        double InitialAngle = gyroAngle();
+
+        while(opModeIsActive()) {
+            telemetry.addData("current_angle", gyroAngle());
+            telemetry.addData("target_angle", angle);
+            telemetry.update();
+
+            if (gyroAngle() < angle - ToleranceOfUnsuccess) {
+                Auto_Field_Centric_drive(0, 0, -rotateSpeed);
+            }
+            else {
+                if (gyroAngle() > angle + ToleranceOfUnsuccess) {
+                    Auto_Field_Centric_drive(0, 0, rotateSpeed);
+                } else {
+                    stopDrive();
+                    break;
+                }
+            }
+        }
+
     }
 
 

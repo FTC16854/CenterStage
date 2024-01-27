@@ -34,6 +34,7 @@ import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -108,6 +109,7 @@ public class VisionParentOopMode extends ParentOpMode {
                 telemetryTfod();
                 telemetryAprilTag();
 
+                telemetry.addData("Current_Gyro", gyroAngle());
                 // Push telemetry to the Driver Station.
                 telemetry.update();
 
@@ -119,8 +121,13 @@ public class VisionParentOopMode extends ParentOpMode {
                 }
 
                 if(gamepad2.left_stick_button == true){
-                  AprilTagDrivingAlignment(10,0, .3);
+//                 AprilTagDrivingDistance(9,12, .35);
                // Auto_Robot_Centric_drive(.5,270,0);
+//                gyroRotationAngle(.3,-90);
+//                AprilTagDrivingAngleAlignmentYAW(9, 0, .2);
+//                AprilTagDrivingAlignment(9, 0, .35);
+//                AprilTagDrivingDistance(9, 12, .35);
+                    AprilTagDrivingDistanceAlignment(9,12,.35);
                 }
 
                 // Share the CPU.
@@ -166,7 +173,6 @@ public class VisionParentOopMode extends ParentOpMode {
 
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
-
         // Choose a camera resolution. Not all cameras support all resolutions.
         builder.setCameraResolution(new Size(640, 480));
 
@@ -175,6 +181,7 @@ public class VisionParentOopMode extends ParentOpMode {
 
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
         //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+
 
         // Choose whether or not LiveView stops if no processors are enabled.
         // If set "true", monitor shows solid orange screen if no processors enabled.
@@ -235,7 +242,7 @@ public class VisionParentOopMode extends ParentOpMode {
         // Set the camera (webcam vs. built-in RC phone camera).
 
         builder.setCamera(BuiltinCameraDirection.BACK);
-
+//>:(
         // Choose a camera resolution. Not all cameras support all resolutions.
         builder.setCameraResolution(new Size(640, 480));
 
@@ -259,6 +266,7 @@ public class VisionParentOopMode extends ParentOpMode {
 
         // Disable or re-enable the aprilTag processor at any time.
         //visionPortal.setProcessorEnabled(aprilTag, true);
+
 
     }   // end method initAprilTag()
 
@@ -365,26 +373,68 @@ public class VisionParentOopMode extends ParentOpMode {
         while(opModeIsActive()){
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
-
             double YdistanceToTag = 0;
-
+            double ToleranceOfUnsuccess = 2;
             for (AprilTagDetection detection : currentDetections){
                 if (detection.id == TagID){
                     YdistanceToTag = detection.ftcPose.y;
+                    telemetry.addData("current_distance_from_tag", YdistanceToTag);
+                    telemetry.addData("target_distance", distance);
+                    telemetry.update();
                 }
         }
-        if (YdistanceToTag > distance){
-            Auto_Robot_Centric_drive(speed,270,0);
+        if (YdistanceToTag > distance + ToleranceOfUnsuccess){
+            Auto_Robot_Centric_drive(speed,90,0);
         } else{
-            stopDrive();
-            break;
+             if(YdistanceToTag < distance - ToleranceOfUnsuccess){
+                Auto_Robot_Centric_drive(speed, 270, 0);
+             }
+             else{
+                 stopDrive();
+                 break;
+             }
+
             }
         }
     }
 
-    public void AprilTagDrivingAlignment(int TagID, double distanceFromCenter, double speed){
+    public void AprilTagDrivingDistanceAlignment(int TagID, double distanceFromCenter, double speed){
+//distance from center "+" makes robot left of tag, "-" robot right of tag
+        double RobotCenter = 0;
 
-       double RobotCenter = -4.5;
+        while(opModeIsActive()){
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+            double XTagPosition = 0;
+            double ToleranceOfUnsuccess= 2;
+
+            for (AprilTagDetection detection : currentDetections){
+                if (detection.id == TagID){
+                    XTagPosition = detection.ftcPose.y + RobotCenter;
+
+
+                    telemetry.addData("XTagPosition", XTagPosition);
+                    telemetry.addData("Distance_From_Center", distanceFromCenter);
+
+                }
+            }
+            if (XTagPosition > distanceFromCenter + ToleranceOfUnsuccess){
+                Auto_Robot_Centric_drive(speed,270,0);
+            }else {
+                if (XTagPosition < distanceFromCenter - ToleranceOfUnsuccess) {
+                    Auto_Robot_Centric_drive(speed, 90, 0);
+                } else {
+                    stopDrive();
+                    break;
+                }
+            }
+        }
+    }
+
+
+    public void AprilTagDrivingAlignment(int TagID, double distanceFromCenter, double speed){
+//distance from center "+" makes robot left of tag, "-" robot right of tag
+       double RobotCenter = 4.5;
        
         while(opModeIsActive()){
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -395,6 +445,10 @@ public class VisionParentOopMode extends ParentOpMode {
             for (AprilTagDetection detection : currentDetections){
                 if (detection.id == TagID){
                     XTagPosition = detection.ftcPose.x + RobotCenter;
+
+
+                    telemetry.addData("XTagPosition", XTagPosition);
+                    telemetry.addData("Distance_From_Center", distanceFromCenter);
 
                 }
             }
@@ -410,7 +464,70 @@ public class VisionParentOopMode extends ParentOpMode {
             }
         }
     }
+    public void AprilTagDrivingAngleAlignment(int TagID, double DegreeFromCenter, double rotateSpeed){
 
+        double RobotCenterAngle = 0;
+
+        while(opModeIsActive()){
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+            double TagAnglePosition = 0;
+            double ToleranceOfUnsuccess= 5;
+
+            for (AprilTagDetection detection : currentDetections){
+                if (detection.id == TagID){
+                    TagAnglePosition = detection.ftcPose.bearing + RobotCenterAngle;
+
+
+                    telemetry.addData("Tag_Angle_Position", TagAnglePosition);
+                    telemetry.addData("Distance_From_Center_Angle", DegreeFromCenter);
+
+                }
+            }
+            if (TagAnglePosition > DegreeFromCenter + ToleranceOfUnsuccess){
+                Auto_Robot_Centric_drive(0,0, -rotateSpeed);
+            }else {
+                if (TagAnglePosition < DegreeFromCenter - ToleranceOfUnsuccess) {
+                    Auto_Robot_Centric_drive(0, 0, rotateSpeed);
+                } else {
+                    stopDrive();
+                    break;
+                }
+            }
+        }
+    }
+    public void AprilTagDrivingAngleAlignmentYAW(int TagID, double DegreeFromCenter, double rotateSpeed){
+
+        double RobotCenterAngle = 0;
+
+        while(opModeIsActive()){
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+            double TagYawAnglePosition = 0;
+            double ToleranceOfUnsuccess= 1.5;
+
+            for (AprilTagDetection detection : currentDetections){
+                if (detection.id == TagID){
+                    TagYawAnglePosition = detection.ftcPose.yaw + RobotCenterAngle;
+
+
+                    telemetry.addData("Tag_Angle_Position", TagYawAnglePosition);
+                    telemetry.addData("Distance_From_Center_Angle", DegreeFromCenter);
+
+                }
+            }
+            if (TagYawAnglePosition > DegreeFromCenter + ToleranceOfUnsuccess){
+                Auto_Robot_Centric_drive(0,0, -rotateSpeed);
+            }else {
+                if (TagYawAnglePosition < DegreeFromCenter - ToleranceOfUnsuccess) {
+                    Auto_Robot_Centric_drive(0, 0, rotateSpeed);
+                } else {
+                    stopDrive();
+                    break;
+                }
+            }
+        }
+    }
 }   // end class
 
 

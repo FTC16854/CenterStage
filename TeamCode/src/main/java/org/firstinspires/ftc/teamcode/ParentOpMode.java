@@ -119,7 +119,7 @@ public class ParentOpMode extends LinearOpMode {
 
     //Pixel Pocket POS
     double PluckPOS = .037;
-    double PickPOS = .5;
+    double PickPOS = .44;
 
     //Wrist Positions
     double HomePOS = .96; // //.325;

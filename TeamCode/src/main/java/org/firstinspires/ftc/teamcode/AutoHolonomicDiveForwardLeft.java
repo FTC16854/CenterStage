@@ -82,8 +82,9 @@ public class AutoHolonomicDiveForwardLeft extends ParentOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-          Auto_Robot_Centric_Drive_Time(.5, 270, 0, 600);
-          Auto_Robot_Centric_Drive_Time(.5, 180, 0, 5000);
+          Auto_Robot_Centric_Drive_Time(.35, 270, 0, 200);
+          Auto_Robot_Centric_Drive_Time(.5, 0, 0, 4000);
+          Auto_Robot_Centric_Drive_Time(.5, 5.1, 0, 3000);
          /* GoPosition(FirstLine);
           sleep(1000);
           AutoWristPOS(ScorePOS);
@@ -97,6 +98,7 @@ public class AutoHolonomicDiveForwardLeft extends ParentOpMode {
 
 
             telemetry.update();
+            break;
         }
     }
 

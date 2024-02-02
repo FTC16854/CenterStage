@@ -83,7 +83,7 @@ public class AutoHolonomicDiveLeft extends ParentOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-          Auto_Field_Centric_drive_time(.5, 180, 0, 3000);
+          Auto_Field_Centric_drive_time(.5, 0, 0, 4000);
            /* GoPosition(FirstLine);
             sleep(1000);
             AutoWristPOS(ScorePOS);
@@ -92,9 +92,11 @@ public class AutoHolonomicDiveLeft extends ParentOpMode {
 */
             ManualResetGyro();
             checkEmergencyStop();
+
             // Stops motors and Terminates if buttons are pressed
 
             telemetry.update();
+            break;
         }
     }
 

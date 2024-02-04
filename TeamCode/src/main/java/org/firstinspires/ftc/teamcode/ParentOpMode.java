@@ -123,7 +123,7 @@ public class ParentOpMode extends LinearOpMode {
 
     //Wrist Positions
     double HomePOS = .96; // //.325;
-    double DropPOS = 0.8; //.12;
+    double DropPOS = 0.75; //.12;
     double ScorePOS = 0.58; //0;
     double HighScorePOS = 0.45;
 
@@ -353,7 +353,7 @@ public class ParentOpMode extends LinearOpMode {
     public void Field_Centric_drive (){
         double Rotation = right_sticky_x();
 
-        double DriveAngle = Math.atan2(left_sticky_y(), left_sticky_x()) - Math.toRadians(gyroAngle());
+        double DriveAngle = Math.atan2(left_sticky_y(), left_sticky_x()) - Math.toRadians(gyroAngle()) - Math.toRadians(180);
         double magnitude = Math.hypot(left_sticky_x(), left_sticky_y());
 
         double leftFrontWheel = magnitude*Math.cos(DriveAngle - (Math.PI/4)) + Rotation;

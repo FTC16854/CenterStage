@@ -314,7 +314,7 @@ public class ParentOpMode extends LinearOpMode {
     }
 
     public boolean AirplaneButton() {
-        if (gamepad1.x == true && gamepad1.dpad_left == true){
+        if (gamepad1.x == true && gamepad1.dpad_down == true){
             return true;
         }
         else {
@@ -547,6 +547,7 @@ public class ParentOpMode extends LinearOpMode {
         PixelPocket.setPosition(PluckPOS);
         AutoWristPOS(HomePOS);
         AutoPushyPush(IN);
+        sleep(1000);
 
 
         while (!BottomLiftSwitch() && opModeInInit()){
@@ -564,11 +565,13 @@ public class ParentOpMode extends LinearOpMode {
         LiftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void GoPosition(int LiftSpecificPlaceYouAreGoingHereNow){
-        double LeftLiftSpeed = .95;
-        double RightLiftSpeed = 1.0;
-        // LEft iS leader
+        double LeftLiftSpeed = .7;
+        //double RightLiftSpeed = 1.0;
+        double RightLiftSpeed = .7;
+        // LEft iS leader - coiled cable
         LiftMotorLeft.setTargetPosition(LiftSpecificPlaceYouAreGoingHereNow);
-        LiftMotorRight.setTargetPosition(LiftMotorLeft.getCurrentPosition());
+//        LiftMotorRight.setTargetPosition(LiftMotorLeft.getCurrentPosition());
+        LiftMotorRight.setTargetPosition(LiftSpecificPlaceYouAreGoingHereNow);
 
         LiftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         LiftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -649,6 +652,7 @@ public class ParentOpMode extends LinearOpMode {
 
     public void RunIntake(){
         double intakePower = 1;
+        double outtakePower = -.2;
         double currentLimit = 2.5;  //may need to increase and/or account for momentary current spikes
 
         if(Intake_button() == true) {
@@ -669,7 +673,7 @@ public class ParentOpMode extends LinearOpMode {
             if(Intake_Reverse_Button() == true) {
 
                 PushyServo.setPosition(IN);
-                IntakeMotor.setPower(-intakePower);
+                IntakeMotor.setPower(outtakePower);
                 PixelPocket.setPosition(PickPOS);
             }
             else{ intakePower = 0;

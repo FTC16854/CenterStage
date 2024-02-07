@@ -122,7 +122,7 @@ public class ParentOpMode extends LinearOpMode {
     double PickPOS = .5;
 
     //Wrist Positions
-    double HomePOS = .96; // //.325;
+    double HomePOS = .97; // //.325;
     double DropPOS = 0.75; //.12;
     double ScorePOS = 0.58; //0;
     double HighScorePOS = 0.45;
@@ -131,7 +131,7 @@ public class ParentOpMode extends LinearOpMode {
     double WristPOS = HomePOS;
 
 // pushy positions
-    double OUT = .68;
+    double OUT = .72;
     double MIDDLE = .57;
     double IN = .33;
 
@@ -652,7 +652,7 @@ public class ParentOpMode extends LinearOpMode {
 
     public void RunIntake(){
         double intakePower = 1;
-        double outtakePower = -.2;
+        double outtakePower = -.75;
         double currentLimit = 2.5;  //may need to increase and/or account for momentary current spikes
 
         if(Intake_button() == true) {

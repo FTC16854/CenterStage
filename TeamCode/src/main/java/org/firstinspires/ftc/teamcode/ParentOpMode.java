@@ -122,7 +122,7 @@ public class ParentOpMode extends LinearOpMode {
     double PickPOS = .5;
 
     //Wrist Positions
-    double HomePOS = .97; // //.325;
+    double HomePOS = .968; // //.325;
     double DropPOS = 0.75; //.12;
     double ScorePOS = 0.58; //0;
     double HighScorePOS = 0.45;
@@ -282,9 +282,9 @@ public class ParentOpMode extends LinearOpMode {
     public boolean Intake_button() { return gamepad1.right_bumper;}
 
 
-    public boolean Lift_Up_Button() { return gamepad1.left_trigger >= .5; }
+    public boolean Lift_Up_Button() { return gamepad1.left_trigger >= .5 || gamepad2.right_trigger >= .5; }
 
-    public boolean Lift_Down_Button() {return gamepad1.left_bumper;}
+    public boolean Lift_Down_Button() {return gamepad1.left_bumper || gamepad2.right_bumper;}
 
     public boolean drive_toggle_button(){
         return gamepad1.start;

@@ -84,7 +84,7 @@ public class AutoHolonomicDiveForwardLeft extends ParentOpMode {
         while (opModeIsActive()) {
           Auto_Robot_Centric_Drive_Time(.3, 270.5, 0, 500);
           sleep(500);
-          Auto_Robot_Centric_Drive_Time(.5, 0, 0, 4000);
+          Auto_Robot_Centric_Drive_Time(.5, 0, 0, 5200);
           //Auto_Robot_Centric_Drive_Time(.5, 5.1, 0, 3000);
          /* GoPosition(FirstLine);
           sleep(1000);

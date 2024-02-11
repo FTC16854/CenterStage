@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Size;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -53,33 +54,33 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
+@Autonomous(name = "Concept: TensorFlow Object Detection", group = "Concept")
 //@Disabled
 public class VisionParentOopMode extends ParentOpMode {
 
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "CenterStage.tflite";
+    public static final String TFOD_MODEL_ASSET = "CenterStage.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
+    public static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
-    private static final String[] LABELS = {
+    public static final String[] LABELS = {
        "Pixel",
     };
 
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
      */
-    private TfodProcessor tfod;
+    public TfodProcessor tfod;
 
-    private AprilTagProcessor aprilTag;
+    public AprilTagProcessor aprilTag;
 
     /**
      * The variable to store our instance of the vision portal.
      */
-    private VisionPortal visionPortal;
+    public VisionPortal visionPortal;
 
     @Override
 
@@ -143,7 +144,7 @@ public class VisionParentOopMode extends ParentOpMode {
     /**
      * Initialize the TensorFlow Object Detection processor.
      */
-    private void initDoubleVision() {
+    public void initDoubleVision() {
 
         // Create the TensorFlow processor by using a builder.
         tfod = new TfodProcessor.Builder()
@@ -230,11 +231,11 @@ public class VisionParentOopMode extends ParentOpMode {
         // Adjust Image Decimation to trade-off detection-range for detection-rate.
         // eg: Some typical detection data using a Logitech C920 WebCam
         // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
-        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
+//         Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
         // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second (default)
         // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second (default)
         // Note: Decimation can be changed on-the-fly to adapt during a match.
-        //aprilTag.setDecimation(3);
+        aprilTag.setDecimation(3);
 
         // Create the vision portal by using a builder.
 
@@ -275,7 +276,7 @@ public class VisionParentOopMode extends ParentOpMode {
     double SpikePlace;
 
 
-    private void telemetryTfod() {
+    public void telemetryTfod() {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
@@ -293,7 +294,7 @@ public class VisionParentOopMode extends ParentOpMode {
 
     }   // end method telemetryTfod()
 
-    private void telemetryAprilTag() {
+    public void telemetryAprilTag() {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
@@ -368,60 +369,60 @@ public class VisionParentOopMode extends ParentOpMode {
 
     }
 
-    public void AprilTagDrivingDistance(int TagID, double distance, double speed){
+//    public void AprilTagDrivingDistance(int TagID, double distance, double speed){
+//
+//        while(opModeIsActive()){
+//            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+//
+//            double YdistanceToTag = 0;
+//            double ToleranceOfUnsuccess = 2;
+//            for (AprilTagDetection detection : currentDetections){
+//                if (detection.id == TagID){
+//                    YdistanceToTag = detection.ftcPose.y;
+//                    telemetry.addData("current_distance_from_tag", YdistanceToTag);
+//                    telemetry.addData("target_distance", distance);
+//                    telemetry.update();
+//                }
+//        }
+//        if (YdistanceToTag > distance + ToleranceOfUnsuccess){
+//            Auto_Robot_Centric_drive(speed,270,0);
+//        } else{
+//             if(YdistanceToTag < distance - ToleranceOfUnsuccess){
+//                Auto_Robot_Centric_drive(speed, 90, 0);
+//             }
+//             else{
+//                 stopDrive();
+//                 break;
+//             }
+//
+//            }
+//        }
+//    }
+
+    public void AprilTagDrivingDistanceAlignment(int TagID, double targetDistanceFromTag, double speed){
+        double RobotEdge = -2.75;
 
         while(opModeIsActive()){
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
-            double YdistanceToTag = 0;
-            double ToleranceOfUnsuccess = 2;
+            double YtagPosition = 0;
+            double ToleranceOfUnsuccess= 1.5;
+
             for (AprilTagDetection detection : currentDetections){
                 if (detection.id == TagID){
-                    YdistanceToTag = detection.ftcPose.y;
-                    telemetry.addData("current_distance_from_tag", YdistanceToTag);
-                    telemetry.addData("target_distance", distance);
+                    YtagPosition = detection.ftcPose.y + RobotEdge;
+
+
+                    telemetry.addData("YTagDistance", YtagPosition);
+                    telemetry.addData("Target Distance_From_Tag", targetDistanceFromTag);
                     telemetry.update();
-                }
-        }
-        if (YdistanceToTag > distance + ToleranceOfUnsuccess){
-            Auto_Robot_Centric_drive(speed,90,0);
-        } else{
-             if(YdistanceToTag < distance - ToleranceOfUnsuccess){
-                Auto_Robot_Centric_drive(speed, 270, 0);
-             }
-             else{
-                 stopDrive();
-                 break;
-             }
-
-            }
-        }
-    }
-
-    public void AprilTagDrivingDistanceAlignment(int TagID, double distanceFromCenter, double speed){
-//distance from center "+" makes robot left of tag, "-" robot right of tag
-        double RobotCenter = 0;
-
-        while(opModeIsActive()){
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-
-            double XTagPosition = 0;
-            double ToleranceOfUnsuccess= 2;
-
-            for (AprilTagDetection detection : currentDetections){
-                if (detection.id == TagID){
-                    XTagPosition = detection.ftcPose.y + RobotCenter;
-
-
-                    telemetry.addData("XTagPosition", XTagPosition);
-                    telemetry.addData("Distance_From_Center", distanceFromCenter);
 
                 }
             }
-            if (XTagPosition > distanceFromCenter + ToleranceOfUnsuccess){
+            if (YtagPosition > targetDistanceFromTag + ToleranceOfUnsuccess){
                 Auto_Robot_Centric_drive(speed,270,0);
             }else {
-                if (XTagPosition < distanceFromCenter - ToleranceOfUnsuccess) {
+                if (YtagPosition < targetDistanceFromTag - ToleranceOfUnsuccess) {
                     Auto_Robot_Centric_drive(speed, 90, 0);
                 } else {
                     stopDrive();
@@ -449,6 +450,7 @@ public class VisionParentOopMode extends ParentOpMode {
 
                     telemetry.addData("XTagPosition", XTagPosition);
                     telemetry.addData("Distance_From_Center", distanceFromCenter);
+                    telemetry.update();
 
                 }
             }
@@ -481,6 +483,7 @@ public class VisionParentOopMode extends ParentOpMode {
 
                     telemetry.addData("Tag_Angle_Position", TagAnglePosition);
                     telemetry.addData("Distance_From_Center_Angle", DegreeFromCenter);
+                    telemetry.update();
 
                 }
             }
@@ -504,7 +507,7 @@ public class VisionParentOopMode extends ParentOpMode {
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
             double TagYawAnglePosition = 0;
-            double ToleranceOfUnsuccess= 1.5;
+            double ToleranceOfUnsuccess= 1;   //1.5
 
             for (AprilTagDetection detection : currentDetections){
                 if (detection.id == TagID){
@@ -513,6 +516,7 @@ public class VisionParentOopMode extends ParentOpMode {
 
                     telemetry.addData("Tag_Angle_Position", TagYawAnglePosition);
                     telemetry.addData("Distance_From_Center_Angle", DegreeFromCenter);
+                    telemetry.update();
 
                 }
             }

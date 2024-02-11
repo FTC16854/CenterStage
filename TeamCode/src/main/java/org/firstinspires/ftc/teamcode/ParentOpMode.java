@@ -122,7 +122,7 @@ public class ParentOpMode extends LinearOpMode {
     double PickPOS = .5;
 
     //Wrist Positions
-    double HomePOS = .968; // //.325;
+    double HomePOS = .9675; // //.325;
     double DropPOS = 0.75; //.12;
     double ScorePOS = 0.58; //0;
     double HighScorePOS = 0.45;
@@ -132,7 +132,7 @@ public class ParentOpMode extends LinearOpMode {
 
 // pushy positions
     double OUT = .72;
-    double MIDDLE = .57;
+    double MIDDLE = .6;
     double IN = .33;
 
     //Toggle drive_Toggle = new Toggle(drive_toggle_button());
@@ -674,7 +674,7 @@ public class ParentOpMode extends LinearOpMode {
 
                 PushyServo.setPosition(IN);
                 IntakeMotor.setPower(outtakePower);
-                PixelPocket.setPosition(PickPOS);
+               // PixelPocket.setPosition(PickPOS);
             }
             else{ intakePower = 0;
                 IntakeMotor.setPower(intakePower);

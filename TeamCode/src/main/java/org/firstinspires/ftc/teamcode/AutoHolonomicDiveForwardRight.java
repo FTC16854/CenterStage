@@ -82,8 +82,8 @@ public class AutoHolonomicDiveForwardRight extends ParentOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-         Auto_Field_Centric_drive_time(.5, 270, 0, 600);
-         Auto_Field_Centric_drive_time(.5, 0, 0, 5000);
+         Auto_Robot_Centric_Drive_Time(.5, 270, 0, 600);
+        Auto_Robot_Centric_Drive_Time(.5, 180, 0, 5000);//change angles
 
           //Test Stuff
 

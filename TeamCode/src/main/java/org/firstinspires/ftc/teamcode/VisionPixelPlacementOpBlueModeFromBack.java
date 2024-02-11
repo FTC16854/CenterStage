@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -43,9 +42,9 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "BLUEAprilTagCENTERPixelPlacement_MP", group = "Concept")
-@Disabled
-public class TEST_MP_VisionPixelPlacementOpMode extends VisionParentOopMode {
+@Autonomous(name = "BLUEAprilTagCENTERPixelPlacementromBack", group = "Concept")
+//@Disabled
+public class VisionPixelPlacementOpBlueModeFromBack extends VisionParentOopMode {
 
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
@@ -103,45 +102,39 @@ public class TEST_MP_VisionPixelPlacementOpMode extends VisionParentOopMode {
                 // Push telemetry to the Driver Station.
                 telemetry.update();
 
-
+                sleep(7000);
                 Auto_Robot_Centric_Drive_Time(.5,270,0, 1320);
                 sleep(100);
                 gyroRotationAngle(.2,-90);
-                sleep(400);
-//                for(int i = 0; i < 100; i++){
-//                    AprilTagDrivingAngleAlignmentYAW(9,0,.18);
-//                }
                 sleep(400);
                 for(int i = 0; i < 100; i++){
                     AprilTagDrivingAlignment(9,0,.3);
                 }
                 //End Helen's Code...
-                Auto_Robot_Centric_Drive_Time(.5, 90, 0, 3850); // Drive Back through truss
-//                aprilTag.setDecimation(3);
+                Auto_Robot_Centric_Drive_Time(.5,90,0, 4000); //Drive through truss
+
+                //Rotate HERE
+                sleep(100);
+                gyroRotationAngle(.2,90); //turn left
                 sleep(400);
-                gyroRotationAngle(.4,90);
-                sleep(400);
-//                for(int i = 0; i < 100; i++){
-//                    AprilTagDrivingAngleAlignmentYAW(3,0,.18);
-//                }
-                sleep(400);
-//                aprilTag.setDecimation(2);
+                //Auto_Robot_Centric_Drive_Time(.5,270,0, 1000);
+                //sleep(100);
+
                 for(int i = 0; i < 100; i++){
                     AprilTagDrivingAlignment(2,0,.3);
                 }
                 GoPosition(FirstLine);
-                sleep(1800);
+                sleep(2300);
                 AutoWristPOS(ScorePOS);
-//                for(int i = 0; i < 100; i++){
-//                    AprilTagDrivingAngleAlignmentYAW(2,0,.3);
-//                }
-                sleep(400);
+                sleep(1000);
                 for(int i = 0; i < 10; i++){
-                    AprilTagDrivingDistanceAlignment(3,7.2,0.2);
+                    AprilTagDrivingDistanceAlignment(3,5.8,.2);
                 }
+                sleep(400);
                 AutoPushyPush(MIDDLE);
                 sleep(1500);
                 AutoPushyPush(OUT);
+
 
 
                 // Share the CPU.

@@ -41,9 +41,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
+import java.sql.Time;
 
 
 /**
@@ -98,6 +101,9 @@ public class ParentOpMode extends LinearOpMode {
 
     //Other Global Variables
     //put global variables here...
+
+    public double intankdelay=500;
+    public double intanktimerstart=0;
     public double ServoPosition = 0;
 
     public int LiftPosition;
@@ -120,6 +126,8 @@ public class ParentOpMode extends LinearOpMode {
     //Pixel Pocket POS
     double PluckPOS = .037;
     double PickPOS = .5;
+    double JostlePOS = .032;
+    double InitPluckPOS = PluckPOS;
 
     //Wrist Positions
     double HomePOS = .9675; // //.325;
@@ -501,7 +509,7 @@ public class ParentOpMode extends LinearOpMode {
 
         GoPosition(LiftPosition); //accidentally commented this out :(
         /* //kills things. doesn't let lift move when at bottom
-        if (BottomLiftSwitch() == true){
+        if (BottomLiftSwitch() == true){`
             ResetEncoders();
         }
         if (BottomLiftSwitch() == true && other thing?){
@@ -540,6 +548,14 @@ public class ParentOpMode extends LinearOpMode {
 
     }
 
+    public void JostlePocket(){
+        if (GetLiftPosition() <= 1500) {       //Make function to change Pluck to Jostle if lift height is low
+            PluckPOS = JostlePOS;
+        }else{
+            PluckPOS = InitPluckPOS;
+        }
+    }
+
     public void HomingLift(){
         LiftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LiftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -555,6 +571,8 @@ public class ParentOpMode extends LinearOpMode {
             LiftMotorRight.setPower(-.2);
             telemetry.addData("Homing.", "Going down...");
             telemetry.addData("Lift Height:", GetLiftPosition());
+
+
         }
 
         LiftMotorLeft.setPower(0);
@@ -656,12 +674,17 @@ public class ParentOpMode extends LinearOpMode {
         double currentLimit = 2.5;  //may need to increase and/or account for momentary current spikes
 
         if(Intake_button() == true) {
+            //intanktimerstart = runtime.milliseconds();
             IntakeMotor.setPower(intakePower);
+
             PixelPocket.setPosition(PickPOS);
             PushyServo.setPosition(IN);
             if(GetLiftPosition() < MinimumToIntake){
                 LiftPosition = MinimumToIntake + 50;
-            }
+            } /*
+            if (runtime.milliseconds()>intanktimerstart+intankdelay){
+                IntakeMotor.setPower(intakePower);
+            } */
 
             /*if(IntakeMotor.getCurrent(CurrentUnit.AMPS) > currentLimit){
                 IntakeMotor.setPower(-intakePower);

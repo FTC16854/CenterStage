@@ -29,20 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Size;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-
-import java.util.List;
 
 /*
  * This OpMode illustrates the basics of TensorFlow Object Detection,
@@ -51,9 +42,9 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "BLUEAprilTagCENTERPixelPlacement", group = "Concept")
-@Disabled
-public class VisionPixelPlacementOpMode extends VisionParentOopMode {
+@Autonomous(name = "BLUEAprilTagCENTERPixelPlacementFront", group = "Concept")
+//@Disabled
+public class VisionPixelPlacementOpBlueModeFromFrount extends VisionParentOopMode {
 
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
@@ -114,12 +105,25 @@ public class VisionPixelPlacementOpMode extends VisionParentOopMode {
 
                 Auto_Robot_Centric_Drive_Time(.5,270,0, 1320);
                 sleep(100);
-                gyroRotationAngle(.2,-90);
+                gyroRotationAngle(.2,90); //turn left
                 sleep(400);
+                Auto_Robot_Centric_Drive_Time(.5,270,0, 1000);
+                sleep(100);
+
                 for(int i = 0; i < 100; i++){
-                    AprilTagDrivingAlignment(9,0,.3);
+                    AprilTagDrivingAlignment(2,0,.3);
                 }
-                //End Helen's Code...
+                GoPosition(FirstLine);
+                sleep(2300);
+                AutoWristPOS(ScorePOS);
+                sleep(1000);
+                for(int i = 0; i < 10; i++){
+                    AprilTagDrivingDistanceAlignment(3,6.2,.2);
+                }
+                sleep(400);
+                AutoPushyPush(MIDDLE);
+                sleep(1500);
+                AutoPushyPush(OUT);
 
                 // Share the CPU.
                 sleep(200000);
